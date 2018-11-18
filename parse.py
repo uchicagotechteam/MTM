@@ -9,6 +9,7 @@ import pandas as pd
 import csv
 
 class Guardian:
+
 	def __init__(self, guardian_dict):
 		self.first_name = guardian_dict['Guardian First Name']
 		self.last_name = guardian_dict['Guardian Last Name']
@@ -26,6 +27,9 @@ class Guardian:
 
 
 class Student:
+	'''
+	Every instance of Student represents one student.
+	'''
 	def __init__(self, student_dict, Guardian):
 		for key in student_dict.keys():
 			if 'FIRST NAME' in key.upper():
@@ -61,21 +65,38 @@ class Student:
 
 
 class Student_Manager:
-
+	'''
+	Student_Manager holds and initializes all instances of students from a given csv.
+	'''
 	def __init__(self, filename):
+		'''
+		Parse the csv file and initialize Student objects within the file.
+		'''
 		self.students = []
 
 		with open(filename, 'rb') as f:
 			result = chardet.detect(f.read()) #identify encoding code needed for pandas read_csv
-		student_dict = pd.read_csv(filename, encoding=result['encoding'])
-		student_dict.fillna(0, inplace = True)
+		student_dict = pd.read_csv(filename, encoding=result['encoding']) #create dataframe of csv 
+		student_dict.fillna(0, inplace = True) 
 		all_col_names = list(student_dict) #list of dataframe column names
 
 		def add_students(df):
+			'''
+			This function takes the pandas dataframe generated from the csv file and parses it to
+			find all students in the file.
+
+			returns: list of Student objects
+			'''
 			students = []
-			for i, row in df.iterrows(): #row is a panda Series
+			for i, row in df.iterrows(): 
+				#row is a panda Series
 
 				def guardian_info():
+					'''
+					Identify columns and values relating to the guardian of the student(s).
+
+					returns: dictionary with guardian-relevant keys and values
+					'''
 					guardian_dict = {} 
 					for col_name in all_col_names: 
 						if 'scholarship' in col_name or 'Guardian' in col_name or 'Phone' in col_name: #check for colnames with Guardian info 
@@ -124,10 +145,12 @@ class Student_Manager:
 
 
 class Tutor:
+
 	def __init__(self, tutor_dict):
 		'''
 		Initialize every instance of Tutor with a dictionary with one tutor's informtion.
 		'''
+
 		self.name = tutor_dict['Full Name']
 		self.subjects = [] #need to find way to incorporate written in subjects; other two columns: tutor_dict['What subjects are you comfortable helping your student with?'] + tutor_dict['If you answered yes to the previous question, which AP/IB tests are you comfortable tutoring?']
 		self.grades = tutor_dict['What grade levels are you comfortable tutoring? (please check all that apply)'].split(',')
