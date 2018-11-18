@@ -1,45 +1,12 @@
-'''
-MTM
+#Lauren Li
+#
+#MTM
+#
+#This file contains the implementation of Student, Tutor, Student_Manager, Tutor_Manager, and Guardian classes from specified csv files.
 
-1. Work on schema for Student, Tutor, and maybe Guardian objects?
-2. What attributes?
-3. What methods?
-4. 
-
-Read csv -> parse through to create all objects -> pass objects to user
-
-Student class attributes
-first name #often combined with last name 
-check:
-1. is there a value in "last name"
-2. if not, are there multiple names in first name
-3. take last one in first and put it as last name 
-last name -> check if field is empty
-guardian -> combine first and last?
-grade - need to have a key to get it all to K-12 as strings
-age
-subjects
-school
-times available
-times per week
-contact info
-preferred tutor first
-preferred tutor last
-special info
-
-
-
-Tutor class attributes
-first
-last
-subjects
-preferred location
-availability
-
-'''
-
-import pandas as pd
 import chardet
+import pandas as pd
+import csv
 
 class Guardian:
 	def __init__(self, guardian_dict):
@@ -52,6 +19,11 @@ class Guardian:
 
 	def __repr__(self):
 		return f'Guardian({self.first_name} {self.last_name}, {self.email})'
+
+	def __str__(self):
+		return f'Guardian({self.first_name} {self.last_name}, {self.email})'
+
+
 
 class Student:
 	def __init__(self, student_dict, Guardian):
@@ -78,9 +50,13 @@ class Student:
 				self.return_student = student_dict[key]
 
 		self.guardian = Guardian
+		self.tutor_matches = []
 
 	def __repr__(self):
-		return f'Student'
+		return f'Student({self.first_name}, {self.last_name})'
+	
+	def __str__(self):
+		return f'Student({self.first_name}, {self.last_name})'
 
 
 
@@ -92,14 +68,12 @@ class Student_Manager:
 		with open(filename, 'rb') as f:
 			result = chardet.detect(f.read()) #identify encoding code needed for pandas read_csv
 		student_dict = pd.read_csv(filename, encoding=result['encoding'])
-		student_dict.fillna(0)
+		student_dict.fillna(0, inplace = True)
 		all_col_names = list(student_dict) #list of dataframe column names
-		#student_dict = student_dict.to_dict(orient='records')
 
 		def add_students(df):
 			students = []
 			for i, row in df.iterrows(): #row is a panda Series
-				#row = row.to_frame().transpose() #change series into its own dataframe with column names
 
 				def guardian_info():
 					guardian_dict = {} 
@@ -108,49 +82,36 @@ class Student_Manager:
 							guardian_dict[col_name] = row.get(col_name)
 					return guardian_dict
 
+				#create Guardian of all student(s) in this row
 				guardian_dict = guardian_info()
 				student_guardian = Guardian(guardian_dict) #create Guardian of all students in this row
 
 				#start parsing students
 				for i in range(1, 5): #each row has max 4 students
 					name = f'Student {i} First Name'
+					student_i = df.columns.get_loc(name) #index of Student's first name
 					another_student_col = 'Do you have another student applying to MTM?' #column between students
-					if i==1:
-						student_i = df.columns.get_loc(name) #index of student 1 First name
-						end_student_i = df.columns.get_loc(another_student_col) #index 21
-						student_one_dict = {}
-						for i in range(student_i, end_student_i):
-							col_name = df.columns[i]
-							val = row.get(col_name)
-							student_one_dict[col_name] = val
-							#student_one_dict = dict(row.iloc[:, :col_i])
-						students.append(Student(student_one_dict, student_guardian))
-					elif i == 2: #student 2
-						if row.get(another_student_col) or row.get(name): #second student exists
-							student_two_i = df.columns.get_loc(name) #index of Student 2 First Name
+					if i==1: #Student one
+						end_student_i = df.columns.get_loc(another_student_col) #Student one ends at first column that asks Do you have another student..?
+					elif i==2: #Student two
+						if row.get(another_student_col).upper() == 'YES' or row.get(name): #second student exists
 							next_student_col = another_student_col + f'.{i-1}'
-							end_student_two_i = df.columns.get_loc(next_student_col) #index of "Do you have another...?.1"
-							student_dict = {}
-							for i in range(student_two_i, end_student_two_i):
-								col_name = df.columns[i]
-								val = row.get(col_name)
-								student_dict[col_name] = val
-							students.append(Student(student_dict, student_guardian))
+							end_student_i = df.columns.get_loc(next_student_col) #end of Student 2 ends with 'Do you have another student..?.1'
 						else:
 							break
-					else: #student 3 or 4
-						if row.get(next_student_col) or row.get(name): #third or fourth student exists
-							student_i = df.columns.get_loc(name) #index of Student 3  or 4 First Name
-							next_student_col = another_student_col + f'.{i-2}' #resetting to find next Do you have another...? column
-							end_student_i = df.columns.get_loc(next_student_col) #index of "Do you have another...?.2 or .3"
-							student_dict = {}
-							for i in range(student_i, end_student_i):
-								col_name = df.columns[i]
-								val = row.get(col_name)
-								student_dict[col_name] = val
-							students.append(Student(student_dict, student_guardian))
+					else: #Student three or four
+						if row.get(another_student_col + f'.{i-2}').upper() == 'YES' or row.get(name):
+							next_student_col = another_student_col + f'.{i-1}'
+							end_student_i = df.columns.get_loc(next_student_col)
 						else:
 							break
+					student_dict = {}
+					for i in range(student_i, end_student_i):
+						col_name = df.columns[i]
+						val = row.get(col_name)
+						student_dict[col_name] = val
+					students.append(Student(student_dict, student_guardian))
+					
 			return students
 
 		self.students = add_students(student_dict)
@@ -158,34 +119,76 @@ class Student_Manager:
 	def __repr__(self):
 		return f'{self.students}'
 
+	def __str__(self):
+		return f'{self.students}'
 
-'''
-def guardian_info(df):
-	guardian_col_name = []
-	guardian_data = []
-	student_dict_col = list(df)
-	for col_name in student_dict_col:
-		if 'scholarship' in col_name or 'Guardian' in col_name or 'Phone' in col_name:
-			guardian_col_name.append(col_name)
-			guardian_data.append(df[col_name])
-	guardian_dict = dict(zip(guardian_col_name, guardian_data))
-	return guardian_dict
-'''
+
+class Tutor:
+	def __init__(self, tutor_dict):
+		'''
+		Initialize every instance of Tutor with a dictionary with one tutor's informtion.
+		'''
+		self.name = tutor_dict['Full Name']
+		self.subjects = [] #need to find way to incorporate written in subjects; other two columns: tutor_dict['What subjects are you comfortable helping your student with?'] + tutor_dict['If you answered yes to the previous question, which AP/IB tests are you comfortable tutoring?']
+		self.grades = tutor_dict['What grade levels are you comfortable tutoring? (please check all that apply)'].split(',')
+
+		if tutor_dict["Are you an international student? (We need this information to ensure you're paid directly by MTM, which keeps you from violating the terms of your visa.)"] == 'Yes':
+			self.intl_student = 1
+		else:
+			self.intl_student = 0
+
+		if tutor_dict['Are you comfortable working with students with disabilities including but not limited to autism, ADHD, and dyslexia? (Your honesty with this question helps us ensure that all students get a tutor who can fully address their needs.)'] == 'Yes, I am comfortable with this although I have no experience tutoring students with disabilities.':
+			self.disabl = 1
+		else:
+			self.disabl = 0
+
+		if tutor_dict['Would you prefer to do in-person or online (i.e. via Skype, webwhiteboard, and other programs) tutoring?'] == 'In-person':
+			self.tutor_method = 1
+		elif tutor_dict['Would you prefer to do in-person or online (i.e. via Skype, webwhiteboard, and other programs) tutoring?'] == 'Either is fine':
+			self.tutor_method = 0
+		else: #online only
+			self.tutor_method = -1
+
+		self.max_students = int(tutor_dict["How many students would you like to take on? (Keep in mind that most families want to meet twice a week for 1-1.5 hours.)"])
+		self.num_students = 0
+		self.matched_students = []
+
+	def __repr__(self):
+		return f'Tutor({self.name}), Matched students: {self.matched_students}'
+
+	def __str__(self):
+		return f'Tutor({self.name}), Matched students: {self.matched_students}'
+
+
+
+class Tutor_Manager:
+	'''
+	Tutor manager holds and initializes all instances of tutors from a given csv.
+	'''
+	def __init__(self, filename):
+		self.tutors = []
+
+		#open Tutors csv and turn each row into a Tutor instance
+		with open(filename, 'r') as f1:
+			reader = csv.DictReader(f1)
+			for row in reader:
+				tut = Tutor(row)
+				self.tutors.append(tut)
+
+	def __repr__(self):
+		return f'{self.tutors}'
+	
+	def __str__(self):
+		return f'{self.tutors}'
 
 
 def main(filename1 = 'tutor.csv', filename2 = 'student.csv'):
 	all_tutors = Tutor_Manager(filename1)
 	all_students = Student_Manager(filename2)
-	
-	#open Tutors csv and turn each row into a Tutor instance
-	with open(filename1, 'rb') as f1:
-		result = chardet.detect(f.read())
-	tutor_dict = pd.read_csv(filename1, encoding=result['encoding'])
-	for row in tutor_dict.itertuples():	
-		tut = Tutor(row)
-		all_tutors.append(tut)
 
-		
+
 if __name__ == '__main__':
-    main('tutor.csv', 'student.csv')
+	main('tutor.csv', 'student.csv')
+
+
 
