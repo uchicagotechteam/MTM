@@ -8,153 +8,17 @@ import chardet
 import pandas as pd
 import csv
 
-class Guardian:
-
-	def __init__(self, guardian_dict):
-		self.first_name = guardian_dict['Guardian First Name']
-		self.last_name = guardian_dict['Guardian Last Name']
-		self.title = guardian_dict['Guardian Preferred Title']
-		self.email = guardian_dict['Guardian Email Address']
-		self.phone = guardian_dict['Primary Phone Number']
-		self.scholarship = guardian_dict['Are you planning on applying for a scholarship?']
-
-	def __repr__(self):
-		return f'Guardian({self.first_name} {self.last_name}, {self.email})'
-
-	def __str__(self):
-		return f'Guardian({self.first_name} {self.last_name}, {self.email})'
-
-
-
-class Student:
-	'''
-	Every instance of Student represents one student.
-	'''
-	def __init__(self, student_dict, Guardian):
-		for key in student_dict.keys():
-			if 'FIRST NAME' in key.upper():
-				self.first_name = student_dict[key]
-			elif 'LAST NAME' in key.upper():
-				self.last_name = student_dict[key]
-			elif 'GRADE' in key.upper():
-				self.grade = student_dict[key] #int
-			elif 'SCHOOL' in key.upper():
-				self.school = student_dict[key]
-			elif 'SUBJECTS' in key.upper():
-				self.subjects = student_dict[key]
-			elif 'IN-PERSON OR ON-LINE' in key.upper():
-				self.method = student_dict[key]
-			elif 'TIMES A WEEK' in key.upper():
-				self.frequency = student_dict[key] 
-			elif 'AVAILABLE FOR TUTORING' in key.upper():
-				self.availability = student_dict[key]
-			elif 'PREVIOUS TUTOR' in key.upper():
-				self.previous_preference = student_dict[key]
-			elif 'MAROON TUTOR MATCH BEFORE' in key.upper():
-				self.return_student = student_dict[key]
-
-		self.guardian = Guardian
-		self.tutor_matches = []
-
-	def __repr__(self):
-		return f'Student({self.first_name}, {self.last_name})'
-	
-	def __str__(self):
-		return f'Student({self.first_name}, {self.last_name})'
-
-
-
-class Student_Manager:
-	'''
-	Student_Manager holds and initializes all instances of students from a given csv.
-	'''
-	def __init__(self, filename):
-		'''
-		Parse the csv file and initialize Student objects within the file.
-		'''
-		self.students = []
-
-		with open(filename, 'rb') as f:
-			result = chardet.detect(f.read()) #identify encoding code needed for pandas read_csv
-		student_dict = pd.read_csv(filename, encoding=result['encoding']) #create dataframe of csv 
-		student_dict.fillna(0, inplace = True) 
-		all_col_names = list(student_dict) #list of dataframe column names
-
-		def add_students(df):
-			'''
-			This function takes the pandas dataframe generated from the csv file and parses it to
-			find all students in the file.
-
-			returns: list of Student objects
-			'''
-			students = []
-			for i, row in df.iterrows(): 
-				#row is a panda Series
-
-				def guardian_info():
-					'''
-					Identify columns and values relating to the guardian of the student(s).
-
-					returns: dictionary with guardian-relevant keys and values
-					'''
-					guardian_dict = {} 
-					for col_name in all_col_names: 
-						if 'scholarship' in col_name or 'Guardian' in col_name or 'Phone' in col_name: #check for colnames with Guardian info 
-							guardian_dict[col_name] = row.get(col_name)
-					return guardian_dict
-
-				#create Guardian of all student(s) in this row
-				guardian_dict = guardian_info()
-				student_guardian = Guardian(guardian_dict) #create Guardian of all students in this row
-
-				#start parsing students
-				for i in range(1, 5): #each row has max 4 students
-					name = f'Student {i} First Name'
-					student_i = df.columns.get_loc(name) #index of Student's first name
-					another_student_col = 'Do you have another student applying to MTM?' #column between students
-					if i==1: #Student one
-						end_student_i = df.columns.get_loc(another_student_col) #Student one ends at first column that asks Do you have another student..?
-					elif i==2: #Student two
-						if row.get(another_student_col).upper() == 'YES' or row.get(name): #second student exists
-							next_student_col = another_student_col + f'.{i-1}'
-							end_student_i = df.columns.get_loc(next_student_col) #end of Student 2 ends with 'Do you have another student..?.1'
-						else:
-							break
-					else: #Student three or four
-						if row.get(another_student_col + f'.{i-2}').upper() == 'YES' or row.get(name):
-							next_student_col = another_student_col + f'.{i-1}'
-							end_student_i = df.columns.get_loc(next_student_col)
-						else:
-							break
-					student_dict = {}
-					for i in range(student_i, end_student_i):
-						col_name = df.columns[i]
-						val = row.get(col_name)
-						student_dict[col_name] = val
-					students.append(Student(student_dict, student_guardian))
-					
-			return students
-
-		self.students = add_students(student_dict)
-
-	def __repr__(self):
-		return f'{self.students}'
-
-	def __str__(self):
-		return f'{self.students}'
-
-
 class Tutor:
 
 	def __init__(self, tutor_dict):
 		'''
-		Initialize every instance of Tutor with a dictionary with one tutor's informtion.
+		Initialize every instance of Tutor with tutor_dict, a dictionary with one tutor's informtion.
 		'''
 
-		self.name = tutor_dict['Full Name']
+		self.name = tutor_dict['Full Name'] #first and last name
 		self.subjects = [] #need to find way to incorporate written in subjects; other two columns: tutor_dict['What subjects are you comfortable helping your student with?'] + tutor_dict['If you answered yes to the previous question, which AP/IB tests are you comfortable tutoring?']
 		self.grades = tutor_dict['What grade levels are you comfortable tutoring? (please check all that apply)'].split(',')
-
+		
 		if tutor_dict["Are you an international student? (We need this information to ensure you're paid directly by MTM, which keeps you from violating the terms of your visa.)"] == 'Yes':
 			self.intl_student = 1
 		else:
@@ -205,13 +69,211 @@ class Tutor_Manager:
 		return f'{self.tutors}'
 
 
+
+class Guardian:
+
+	def __init__(self, guardian_dict):
+		'''
+		Initialize Guardian object with guardian_dict, a dictionary with guardian info.
+		'''
+		self.first_name = guardian_dict['Guardian First Name']
+		self.last_name = guardian_dict['Guardian Last Name']
+		self.title = guardian_dict['Guardian Preferred Title']
+		self.email = guardian_dict['Guardian Email Address']
+		self.phone = guardian_dict['Primary Phone Number']
+		self.scholarship = guardian_dict['Are you planning on applying for a scholarship?']
+
+	def __eq__(self, other):
+		return (self.first_name == other.first_name) and (self.last_name == other.last_name)
+
+	def __repr__(self):
+		return f'Guardian({self.first_name} {self.last_name}, {self.email})'
+
+	def __str__(self):
+		return f'Guardian({self.first_name} {self.last_name}, {self.email})'
+
+
+
+class Student:
+	'''
+	Every instance of Student represents one student. It requires that Tutor_Manager be run first.
+	'''
+	def __init__(self, student_dict, Guardian, all_tutors):
+		'''
+		Iniitalize a student object.
+
+		student_dict: dictionary with student information
+		Guardian: Guardian object associated with student
+		all_tutors: Tutor_Manager object with list of all tutors
+		'''
+
+		for key in student_dict.keys():
+			if 'FIRST NAME' in key.upper():
+				self.first_name = student_dict[key]
+			elif 'LAST NAME' in key.upper():
+				self.last_name = student_dict[key]
+			elif 'GRADE' in key.upper():
+				self.grade = student_dict[key] #int
+			elif 'SCHOOL' in key.upper():
+				self.school = student_dict[key]
+			elif 'SUBJECTS' in key.upper():
+				self.subjects = student_dict[key]
+			elif 'IN-PERSON OR ON-LINE' in key.upper():
+				self.method = student_dict[key]
+			elif 'TIMES A WEEK' in key.upper():
+				self.frequency = student_dict[key] 
+			elif 'AVAILABLE FOR TUTORING' in key.upper():
+				self.availability = student_dict[key]
+			elif 'PREVIOUS TUTOR' in key.upper():
+				self.previous_tutor_name = student_dict[key] #if no preference, value should be 0
+				self.check_previous_tutor = False #whether or not a human needs to check the student's previous tutor preference
+				self.previous_tutor_match = [] #list of matches to current tutor list
+			#elif 'MAROON TUTOR MATCH BEFORE' in key.upper():
+				#self.return_student = student_dict[key]
+
+		self.guardian = Guardian
+		self.tutor_matches = []		
+
+		if isinstance(self.previous_tutor_name, str): #student has a previous tutor preference, try to find a match within tutors list
+
+			def find_previous_tutors(tutor_list):
+				'''
+				This method searches a list of all tutor objects to see if student's preferred previous tutor is within the list of current Tutor objects.
+				If there are multiple matches, change self.check_previous_tutor to True.
+
+				tutor_list: list of all Tutor objects
+
+				returns: list of match(es) of Tutors (empty if no matches, 1 element if 1 match, multiple elements if more than 1 match)
+				'''
+				if not isinstance(self.previous_tutor_name, str): #self.previous_preference is 0
+					raise TypeError
+
+				match = []
+
+				if len(self.previous_tutor_name.split()) == 1: #previous tutor name has one name, presumably a first 
+					match = [tutor for tutor in tutor_list.tutors if tutor.name.split()[0].upper() == self.previous_tutor_name.upper()] #split tutor name by space and compare first name to self.previous_tutor_name
+				else: #previous tutor name has more than one name, presumably a first and last
+					match = [tutor for tutor in tutor_list.tutors if tutor.name.upper() == self.previous_tutor_name.upper()]
+
+				if len(match) > 1:
+					self.check_previous_tutor = True #there is more than one match so flag attribute as True to indicate that a human should check
+
+				return match
+
+			self.previous_tutor_match = find_previous_tutors(all_tutors) #all_tutors is the list of all tutors from Tutor_Manager				
+
+
+	def __repr__(self):
+		return f'Student({self.first_name}, {self.last_name})'
+	
+	def __str__(self):
+		return f'Student({self.first_name}, {self.last_name})'
+
+
+
+class Student_Manager:
+	'''
+	Student_Manager holds and initializes all instances of students from a given csv.
+	'''
+	def __init__(self, filename, all_tutors):
+		'''
+		Parse the csv file and initialize Student objects within the file.
+
+		filename: csv with student info
+		all_tutors: Tutor_Manager object with list of all tutors
+		'''
+		self.students = []
+
+		with open(filename, 'rb') as f:
+			result = chardet.detect(f.read()) #identify encoding code needed for pandas read_csv
+		student_dict = pd.read_csv(filename, encoding=result['encoding']) #create dataframe of csv 
+		student_dict.fillna(0, inplace = True) 
+		all_col_names = list(student_dict) #list of dataframe column names
+
+		def add_students(df):
+			'''
+			This function takes the pandas dataframe generated from the csv file and parses it to
+			find all students in the file.
+
+			returns: list of Student objects
+			'''
+			students = []
+			for i, row in df.iterrows(): 
+				#row is a panda Series
+
+				def guardian_info():
+					'''
+					Identify columns and values relating to the guardian of the student(s).
+
+					returns: dictionary with guardian-relevant keys and values
+					'''
+					guardian_dict = {} 
+					for col_name in all_col_names: 
+						if 'scholarship' in col_name or 'Guardian' in col_name or 'Phone' in col_name: #check for colnames with Guardian info 
+							guardian_dict[col_name] = row.get(col_name)
+					return guardian_dict
+
+				#create Guardian of all student(s) in this row
+				guardian_dict = guardian_info()
+				student_guardian = Guardian(guardian_dict) #create Guardian of all students in this row
+
+				#start parsing students
+				for i in range(1, 5): #each row has max 4 students
+					name = f'Student {i} First Name'
+					student_i = df.columns.get_loc(name) #index of Student's first name
+					another_student_col = 'Do you have another student applying to MTM?' #column between students
+					if i==1: #Student one
+						end_student_i = df.columns.get_loc(another_student_col) #Student one ends at first column that asks Do you have another student..?
+					elif i==2: #Student two
+						if str(row.get(another_student_col)).upper() == 'YES' or row.get(name): #second student exists
+							next_student_col = another_student_col + f'.{i-1}'
+							end_student_i = df.columns.get_loc(next_student_col) #end of Student 2 ends with 'Do you have another student..?.1'
+						else:
+							break
+					else: #Student three or four
+						if str(row.get(another_student_col + f'.{i-2}')).upper() == 'YES' or row.get(name):
+							next_student_col = another_student_col + f'.{i-1}'
+							end_student_i = df.columns.get_loc(next_student_col)
+						else:
+							break
+
+					student_dict = {}
+
+					#for each column in the range of the given student columns, add key and value to empty student_dict
+					for i in range(student_i, end_student_i):
+						col_name = df.columns[i] #find column name associated with column index
+						val = row.get(col_name) #get value in the row for that column name
+						student_dict[col_name] = val #add column name as key and set value
+
+					students.append(Student(student_dict, student_guardian, all_tutors))
+					
+			return students
+
+		self.students = add_students(student_dict)
+
+	def match_guardian(self, Guardian):
+		'''
+		This method takes a guardian name and finds all of the students associated with that guardian.
+
+		guardian: Guardian object
+
+		returns: list of student(s) with that guardian
+		'''
+		return [i for i in self.students if i.guardian == Guardian]
+
+
+	def __repr__(self):
+		return f'{self.students}'
+
+	def __str__(self):
+		return f'{self.students}'
+
+
+
 def main(filename1 = 'tutor.csv', filename2 = 'student.csv'):
 	all_tutors = Tutor_Manager(filename1)
 	all_students = Student_Manager(filename2)
 
-
-if __name__ == '__main__':
-	main('tutor.csv', 'student.csv')
 
 
 
