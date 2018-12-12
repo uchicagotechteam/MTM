@@ -3,9 +3,6 @@ from parse import *
 
 main(filename = 'tutor.csv', filename2 = 'student.csv') # all_tutors + all_students
 
-# I don't exactly know how to "pull" each student and tutor out of the managers to use in the functions(?)
-# I'm getting an error that says the variables can't be assigned to their operators
-
 # Must-haves: 
 
 '''	 Tutors should have at least two days of overlap with students 
@@ -64,6 +61,17 @@ def grade_match(tutor,student):
 			match == True
 
 	return match 
+
+# Checks if the tutor and student both have overlapping time availabilities
+
+''' format -> ["day time"] 
+			  ex: "Monday Evening" / "Friday Afternoon/Evening" / "Sunday Morning"
+			  --- Morning / Afternoon / Evening '''
+
+# Returns an integer --> number of overlapping day/time pairs
+
+def time_match(tutor,student):
+
 			
 
 
