@@ -73,7 +73,11 @@ def grade_match(tutor,student):
 def time_match(tutor,student):
 
 			
-
+# need a 'must-have' function that will check all 4 must-have conditions and then return true'
+#Time: Tutors should also have at least 2 days of overlap with students in their indicated availability
+# Disabilities
+# International/scholarship 
+# subject/grade-level (tutor must be comfortable if student is high school student, lower grades are just preference"
 
 
 
