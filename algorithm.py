@@ -11,7 +11,7 @@ main(filename = 'tutor.csv', filename2 = 'student.csv') # all_tutors + all_stude
 
 
 ''' subject-match : Returns how many subjects the tutor can teach that overlaps with the student's needed subjects '''
-
+'''
 def subject_match(tutor,student):  # Returns integer -> How many subjects the tutor can teach 
 	t = 0
 	for subject-t in tutor.subjects:
@@ -19,16 +19,18 @@ def subject_match(tutor,student):  # Returns integer -> How many subjects the tu
 			if subject-t == subject-s:
 				t += 1
 	return t 
-
+	'''
 
 
 ''' grade-match : Returns True if student is in the tutor's indicated grade range '''
 
 def grade_match(tutor,student):  
+	
 	''' Kindergarten - 2nd
 		3rd - 5th
 		6th - 8th
 		High School ''' # the grades for Tutor are separated by "," but still are strings
+
 	grade_range = []
 
 	# Assigning indicated grade intervals in tutor_dict to integer
@@ -45,22 +47,34 @@ def grade_match(tutor,student):
 
 	# Assigning student grade to integer based on tutor's ranges
 
-	if student.grade == "Kindergarten" or student.grade <= 2:
+	if student.grade == "K" or student.grade == "Pre-K":
 		grade_student == 1
-	elif student.grade <= 5:
-		grade_student == 2
-	elif student.grade <= 8:
-		grade_student == 3
-	else: 
-		grade_student == 4
 
-	match == False
+	else:
+
+		if student.grade[0:2].isdigit():
+			grade_student == 4  #High School
+
+		elif student.grade[0].isdigit():
+
+			grade_ == int(student.grade[0])
+
+			if grade_ <= 2:
+				grade_student == 1
+			elif grade_ <= 5:
+				grade_student == 2
+			else:
+				grade_student == 3
 
 	for grade in grade_range:
 		if grade_student == grade:
 			match == True
 
-	return match 
+	return match
+
+
+
+
 
 # Checks if the tutor and student both have overlapping time availabilities
 
@@ -71,6 +85,8 @@ def grade_match(tutor,student):
 # Returns an integer --> number of overlapping day/time pairs
 
 def time_match(tutor,student):
+
+
 
 			
 # need a 'must-have' function that will check all 4 must-have conditions and then return true'
