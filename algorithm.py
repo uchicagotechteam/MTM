@@ -5,7 +5,7 @@ main(filename = 'tutor.csv', filename2 = 'student.csv') # all_tutors + all_stude
 
 # Must-haves: 
 
-'''	 Tutors should have at least two days of overlap with students 
+'''	 Tutor should have at least two days of overlap with students 
      in their indicated availability 
 	 I checked the Tutor class and there wasn't any attribute for availability (?) '''
 
