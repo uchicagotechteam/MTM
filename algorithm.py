@@ -3,12 +3,100 @@ from parse import *
 
 main(filename = 'tutor.csv', filename2 = 'student.csv') # all_tutors + all_students
 
-# Must-haves: 
 
-'''	 Tutor should have at least two days of overlap with students 
-     in their indicated availability 
-	 I checked the Tutor class and there wasn't any attribute for availability (?) '''
 
+''' MUST-HAVE FUNCTIONS '''
+
+# Checks if the tutor and student both have overlapping time availabilities
+
+''' format -> ["day time"] 
+			  ex: "Monday Evening" / "Friday Afternoon/Evening" / "Sunday Morning"
+			  --- Morning / Afternoon / Evening '''
+
+# Returns an integer --> number of overlapping day/time pairs
+
+def time_match(tutor,student):
+
+
+''' creating function to check if tutor and student comfortable match on disabilities'''
+def disa_match(tutor, student):
+
+	''' such that if student struggles with learning disabilities,
+	 tutor will be comfortable with teaching'''
+
+	 if student.disabl:
+	 	if tutor.disabl: #if student has disability and tutor is comfortable
+	 		return True
+	 	else:
+	 		return False # tutor is not comfortable
+	 else:
+	 	return False #student does not have learning disbility
+
+''' international_match, if student is not scholarship student, checks to see if tutor is international
+	If tutor international, student must be scholarship.
+	If student not scholarship, tutor cannot be international '''
+def international_match(tutor, student):
+
+	if not student.scholarship:
+		if tutor.intl_student:
+			return False # internation cannot teach regular student
+		else:
+			return True
+	else:
+		return True # scholarship student can take any tutor
+
+
+
+''' grade_subject_match is used if  student is in high school or need ACT/SAT prep.
+	Purpose:
+		1. If student needs standardized testing prep, tutor must be able to teach
+		2. If high school student, tutor must be able to teach their specific subject, and 
+			be comfortable with teaching high school student
+				(ex. AP Chem, English, etc)
+		3. If student it not in high school
+
+'''
+def grade_subject_match(tutor, student):
+
+	# check if student is in high school
+	if student.grade[0:2].isdigit():
+		# check if tutor can teach high school
+		for grade in tutor.grades:
+			if(grade == "High School"):
+				# check if their specific subjects match. (Kinda hard for math subjects)
+
+
+
+
+
+				
+		return False # if student is in high school and tutor cannot teach this grade range
+	
+	# check if ACT/SAT prep needed
+
+
+
+''' must_have checks if student and tutor fulfill must-have requirements
+	if not, tutor is removed from student list '''
+def must_have(tutor, student):
+	if international_match(tutor, student) &&
+	   disa_match(tutor, student) &&
+	   grade_subject_match(tutor, student) &&
+	   time_match(tutor, student):
+	   	return True # all must-haves match
+	else:
+		student.tutor_matches.remove(tutor)
+		return False # some thing does not match
+
+''' goes through list of students and remove tutors that do not fufill the must-have requirements
+	from their list '''
+def sort_must_have(student[]):
+
+
+
+
+
+''' PREFERENCE FUNCTIONS '''
 
 ''' subject-match : Returns how many subjects the tutor can teach that overlaps with the student's needed subjects '''
 '''
@@ -72,30 +160,25 @@ def grade_match(tutor,student):
 
 	return match
 
+''' based on matching preferences between student and tutor, return an integer
+	weight.
+	Three main preferences:
+		1. If student requested a specific tutor
+		2. If student and tutor subject matches (This is only a must-have if student in high school, otherwise, preference) 
+'''
+def preference_weight(tutor, student):
+	return 0
 
 
+''' function will leave tutor with highest preference weight in list
+	this function should be called on the student with the least
+	number of tutors first '''
+def sort_preference(tutor, student):
+	return 0
 
-
-# Checks if the tutor and student both have overlapping time availabilities
-
-''' format -> ["day time"] 
-			  ex: "Monday Evening" / "Friday Afternoon/Evening" / "Sunday Morning"
-			  --- Morning / Afternoon / Evening '''
-
-# Returns an integer --> number of overlapping day/time pairs
-
-def time_match(tutor,student):
-
-
-
-			
-# need a 'must-have' function that will check all 4 must-have conditions and then return true'
-#Time: Tutors should also have at least 2 days of overlap with students in their indicated availability
-# Disabilities
-# International/scholarship 
-# subject/grade-level (tutor must be comfortable if student is high school student, lower grades are just preference"
-
-
+''' sort_students should sort students in list by lowest number of tutor in their
+	object list to highest number '''
+def sort_students(student[]):
 
 
 
