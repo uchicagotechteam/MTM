@@ -22,7 +22,7 @@ def subject_match(tutor,student):  # Returns integer -> How many subjects the tu
 	'''
 
 
-''' grade-match : Returns True if student is in the tutor's indicated grade range '''
+''' grade-match : Returns 1 if student grade satisfies tutor's indicated grade range '''
 
 def grade_match(tutor,student):  
 	
@@ -63,14 +63,16 @@ def grade_match(tutor,student):
 				grade_student == 1
 			elif grade_ <= 5:
 				grade_student == 2
-			else:
+			elif grade <= 8:
 				grade_student == 3
+			else:
+				grade_student == 4   # Case for 9th graders
 
 	for grade in grade_range:
-		if grade_student == grade:
-			match == True
+		if grade == grade_student:
+			return 1
 
-	return match
+	return 0
 
 
 
@@ -84,7 +86,29 @@ def grade_match(tutor,student):
 
 # Returns an integer --> number of overlapping day/time pairs
 
+# Tutor class does not have availability element!!!
+
 def time_match(tutor,student):
+
+	tutor_avail = tutor.availability
+	t_avail = tutor_avail.title() #letters in spreadsheet are lowercase
+
+	student_avail = student.availability
+
+	overlap == 0
+
+	for s in student_avail.split(","):
+		for t in t_avail.split(","):
+			if s == t:
+				overlap += 1
+
+	return overlap
+	
+		
+
+
+
+
 
 
 
