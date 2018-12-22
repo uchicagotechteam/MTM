@@ -169,10 +169,26 @@ def grade_match(tutor,student):
 ''' based on matching preferences between student and tutor, return an integer
 	weight.
 	Three main preferences:
-		1. If student requested a specific tutor
+		1. If student requested a specific tutor (5 pts)
 		2. If student and tutor subject matches (This is only a must-have if student in high school, otherwise, preference) 
+			First subject match (3pts), additional matches are (1pt). 
+		!! These points are arbitary and can be fine tuned later!!!
 '''
 def preference_weight(tutor, student):
+	
+	point = 0
+	if student.check_previous_tutor: # if student has preferred tutor
+		if(tutor.name == student.previous_tutor_name):
+			point += 5
+			
+	sub_match = subject_match(tutor, student) #obtain number of subject matches
+	if(sub_match >0)
+		point += 3
+		
+	# adding 1 point for additional subject matches. Ideally, tutor can teach at least one
+	sub_match--
+	while sub_match>0
+		point += 1	
 	return 0
 
 
