@@ -73,6 +73,11 @@ def grade_subject_match(tutor, student):
 		return False # if student is in high school and tutor cannot teach this grade range
 	
 	# check if ACT/SAT prep needed
+	
+# Checks if tutor and student can both either meet in-person or online
+
+def teach_method(tutor,student):
+
 
 
 
@@ -82,7 +87,8 @@ def must_have(tutor, student):
 	if international_match(tutor, student) and
 	   disa_match(tutor, student) and
 	   grade_subject_match(tutor, student) and
-	   time_match(tutor, student):
+	   time_match(tutor, student) and
+	   teach_method(tutor,student):
 	   	return True # all must-haves match
 	else:
 		student.tutor_matches.remove(tutor)
