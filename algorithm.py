@@ -80,13 +80,9 @@ def grade_match(tutor,student):
 
 # Checks if the tutor and student both have overlapping time availabilities
 
-''' format -> ["day time"] 
-			  ex: "Monday Evening" / "Friday Afternoon/Evening" / "Sunday Morning"
-			  --- Morning / Afternoon / Evening '''
-
 # Returns an integer --> number of overlapping day/time pairs
 
-# Tutor class does not have availability element!!!
+# Tutor class does not have availability element!!
 
 def time_match(tutor,student):
 
@@ -103,8 +99,39 @@ def time_match(tutor,student):
 				overlap += 1
 
 	return overlap
+
+	# what if a student only wants one day of tutoring? (per week)
+
+
+
+# Checks if a tutor is an international student
+# An international tutor can only teach scholarship students
+
+# There is no scholarship status for student data!!
+
+def inter_match(tutor,student):
+
+	if tutor.intl_student == 1:
+
+		if student.scholarship == 1:   # student.scholarship is not an existing element (just made up)
+			return 1 
+		else:
+			return 0
+
+	else:
+		return 1
+
+		# 1 --> tutor and student can be paired
+
+		# 0 --> tutor and student cannot be paired
+
+
+# Checks if tutor and student can both either meet in-person or online
+
+def teach_method(tutor,student):
 	
-		
+
+
 
 
 
