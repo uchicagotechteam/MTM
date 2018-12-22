@@ -79,9 +79,9 @@ def grade_subject_match(tutor, student):
 ''' must_have checks if student and tutor fulfill must-have requirements
 	if not, tutor is removed from student list '''
 def must_have(tutor, student):
-	if international_match(tutor, student) &&
-	   disa_match(tutor, student) &&
-	   grade_subject_match(tutor, student) &&
+	if international_match(tutor, student) and
+	   disa_match(tutor, student) and
+	   grade_subject_match(tutor, student) and
 	   time_match(tutor, student):
 	   	return True # all must-haves match
 	else:
