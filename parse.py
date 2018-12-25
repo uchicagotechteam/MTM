@@ -36,6 +36,11 @@ class Tutor:
 		else: #online only
 			self.tutor_method = -1
 
+		if tutor_dict['Would you be willing to do standardized test prep for elementary schoolers within the one-on-one tutoring context? (We will provide the foundational resources for you.)'] == 'Yes':
+			self.test_prep = 1
+		else: #no test-prep
+			self.test_prep = 0
+
 		self.max_students = int(tutor_dict["How many students would you like to take on? (Keep in mind that most families want to meet twice a week for 1-1.5 hours.)"])
 		self.num_students = 0
 		self.matched_students = []
