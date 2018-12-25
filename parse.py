@@ -16,7 +16,8 @@ class Tutor:
 		'''
 
 		self.name = tutor_dict['Full Name'] #first and last name
-		self.subjects = [] #need to find way to incorporate written in subjects; other two columns: tutor_dict['What subjects are you comfortable helping your student with?'] + tutor_dict['If you answered yes to the previous question, which AP/IB tests are you comfortable tutoring?']
+		self.subjects = tutor_dict['What subjects are you comfortable helping yur student with?'] #subjects
+		self.ap_tests = tutor_dict['If you answered yes to the previous question, which AP/IB tests are you comfortable tutoring?'] #AP Tests
 		self.grades = tutor_dict['What grade levels are you comfortable tutoring? (please check all that apply)'].split(',')
 		
 		if tutor_dict["Are you an international student? (We need this information to ensure you're paid directly by MTM, which keeps you from violating the terms of your visa.)"] == 'Yes':
