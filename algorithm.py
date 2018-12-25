@@ -11,16 +11,56 @@ main(filename = 'tutor.csv', filename2 = 'student.csv') # all_tutors + all_stude
 
 
 ''' subject-match : Returns how many subjects the tutor can teach that overlaps with the student's needed subjects '''
-'''
+
+
+
 def subject_match(tutor,student):  # Returns integer -> How many subjects the tutor can teach 
-	t = 0
-	for subject-t in tutor.subjects:
-		for subject-s in student.subjects:
-			if subject-t == subject-s:
-				t += 1
-	return t 
+	
+	'''
+	Reading
+
+	Math 		//		Geometry, Trigonometry, Calculus, Pre-Calculus
+						(have these options)
+
+	Science		//		Chemistry, Biology, Physics, CS
+
+	English		//		AP English
+	History (U.S.)		// AP World History
+
+	Study/Organizational Skills == Study
+
+	Misc 		//		French, CPS Testing, Spanish, Test-Prep, College Algebra, Japanese
+				//		"Will discuss", SAT/ACT Prep
+
+				(please make this a bullet)
+	
+
+	All (will combine core subjects listed above-left)
 	'''
 
+	# COVERING BASIC SUBJECTS (options listed for tutors)
+
+	subjects_ = []
+	
+	for subject in tutor.subjects.split(","):
+
+		if "Reading Comprehension" in subject:
+			subjects_.append("Reading")
+
+		elif "Basic Math" in subject:
+			subjects_.append("Math")  # basic math up unti 8th grade-ish
+
+		elif "English" in subject:
+			subjects_.append("English")
+
+		elif "General Science" in subject:
+			subjects_.append("Science")
+
+		elif "U.S. History" in subject:
+			subjects_.append("History")  # assuming this will cover basic, elementary-school history topics 
+
+		else:  #Study/Organizational Skills
+			subjects_.append("Study")
 
 ''' grade-match : Returns 1 if student grade satisfies tutor's indicated grade range '''
 
@@ -129,6 +169,46 @@ def inter_match(tutor,student):
 # Checks if tutor and student can both either meet in-person or online
 
 def teach_method(tutor,student):
+
+	if student.method == "In-person":
+		method = 1
+
+	elif student.method == "Either is fine":
+		method = 0
+
+	else: #online
+		method = -1
+
+	if tutor.tutor_method == method: # 2 means tutor and student have same preferences
+		return 2					 #      (ex: On-line / On-line)
+
+	elif tutor.tutor_method == 0:    # Tutor is fine with both in-person and on-line
+		return 1
+
+	else:                            # Tutor and Student have conflicting preferences
+		return 0
+
+
+def disability(tutor,student): #Must-have
+
+	# Student disability status isn't indicated in the data given!!
+
+	if student.disabl == 1:  # student.disabl non-existent
+		if tutor.disabl == 1:
+			return 1
+		else: 
+			return 0
+
+	else:
+		return 1
+
+		# 1 --> tutor and student can be paired
+
+		# 0 --> tutor and student cannot be paired
+
+
+
+
 	
 
 
@@ -146,8 +226,7 @@ def teach_method(tutor,student):
 # International/scholarship 
 # subject/grade-level (tutor must be comfortable if student is high school student, lower grades are just preference"
 
-
-
+# We should eventually make a function that matches high school students' advanced subjects (esp STEM) to tutors with corresponding majors/skills
 
 
 
