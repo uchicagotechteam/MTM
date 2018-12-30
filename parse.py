@@ -21,6 +21,7 @@ class Tutor:
 		self.grades = tutor_dict['What grade levels are you comfortable tutoring? (please check all that apply)'].split(',')
 
 		self.major = tutor_dict["Intended Major (it's okay if you're Undecided!)"] #Helps with assigning tutors to advanced subjects
+		self.extra_subjects = tutor_dict['Please let us know if there are any other subjects you can help with (a foreign language, music theory, physics, chemistry, geometry, psychology, economics, British literature, etc.)']
 		
 		if tutor_dict["Are you an international student? (We need this information to ensure you're paid directly by MTM, which keeps you from violating the terms of your visa.)"] == 'Yes':
 			self.intl_student = 1
