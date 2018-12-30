@@ -19,6 +19,8 @@ class Tutor:
 		self.subjects = tutor_dict['What subjects are you comfortable helping yur student with?'] #subjects
 		self.ap_tests = tutor_dict['If you answered yes to the previous question, which AP/IB tests are you comfortable tutoring?'] #AP Tests
 		self.grades = tutor_dict['What grade levels are you comfortable tutoring? (please check all that apply)'].split(',')
+
+		self.major = tutor_dict["Intended Major (it's okay if you're Undecided!)"] #Helps with assigning tutors to advanced subjects
 		
 		if tutor_dict["Are you an international student? (We need this information to ensure you're paid directly by MTM, which keeps you from violating the terms of your visa.)"] == 'Yes':
 			self.intl_student = 1
