@@ -12,9 +12,7 @@ main(filename = 'tutor.csv', filename2 = 'student.csv') # all_tutors + all_stude
 
 ''' subject-match : Returns how many subjects the tutor can teach that overlaps with the student's needed subjects '''
 
-
-
-def subject_match(tutor,student):  # Returns integer -> How many subjects the tutor can teach 
+def subject_match(tutor,student):
 	
 	'''
 	Reading
@@ -40,7 +38,7 @@ def subject_match(tutor,student):  # Returns integer -> How many subjects the tu
 
 	# COVERING BASIC SUBJECTS (options listed for tutors)
 
-	subjects_ = []
+	subjects_ = [] # List of student subjects that are checked to see if they have overlap
 	
 	for subject in tutor.subjects.split(","):
 
@@ -61,6 +59,20 @@ def subject_match(tutor,student):  # Returns integer -> How many subjects the tu
 
 		else:  #Study/Organizational Skills
 			subjects_.append("Study")
+
+	if "Math" in tutor.major:
+		subjects_.extend(["Geometry","Trigonometry","Pre-Calculus","Calculus"]) # For advanced math subjects (older students)
+
+	overlap = 0
+
+	for student_subj in student.subjects.split(","):
+		for tutor_subj in subjects_:
+			if (student_subj == tutor_subj) or (student_subj in tutor.extra_subjects):
+				overlap += 1
+
+	return overlap 
+
+
 
 ''' grade-match : Returns 1 if student grade satisfies tutor's indicated grade range '''
 
@@ -205,6 +217,40 @@ def disability(tutor,student): #Must-have
 		# 1 --> tutor and student can be paired
 
 		# 0 --> tutor and student cannot be paired
+
+
+''' 
+	Priority Order:
+		1. Grade Level
+		2. Subject
+		3. Scholarship Status  '''
+
+def must_have(tutor,student): # Checks must-haves (time-availability, disability, scholarship status)
+
+	if (time_match(tutor,student) >= 2) and (inter_match(tutor,student) == 1) and (disability(tutor,student) == 1):
+		return True 
+
+	else:
+		return False
+
+
+def make_table(tutor_file,student_file):
+
+	matched_table = {}
+
+	for tutor in tutor_file:
+		weight_pairs = {} # Each tutor will have their own dictionary // Each key is the students name followed by their "weight"
+
+		for student in student_file:
+			if must_have(tutor,student) == True:
+				weight_pairs[student.first_name + " " + student.last_name] = subject_match(tutor,student) + grade_match(tutor,student) + time_match(tutor,student) + teach_method(tutor,student) # This is where the "weight" is calculated
+
+		max_students = [] # Students with the highest "weights"
+		max_ = max(list(weight_pairs.values())) # Highest integer value of weights
+
+		for key in weight_pairs:
+			if weight_pairs[key] == max_:
+				max_students.append(key) # key --> Name of student
 
 
 
