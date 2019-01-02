@@ -282,7 +282,3 @@ class Student_Manager:
 def main(filename1 = 'tutor.csv', filename2 = 'student.csv'):
 	all_tutors = Tutor_Manager(filename1)
 	all_students = Student_Manager(filename2)
-
-
-
-
