@@ -1,7 +1,10 @@
 from parse import *
+from collections import defaultdict
 
 
-main(filename = 'tutor.csv', filename2 = 'student.csv') # all_tutors + all_students
+#To-Do
+# siblings
+
 
 # Must-haves: 
 
@@ -137,23 +140,10 @@ def grade_match(tutor,student):
 # Tutor class does not have availability element!!
 
 def time_match(tutor,student):
-
-	tutor_avail = tutor.availability
-	t_avail = tutor_avail.title() #letters in spreadsheet are lowercase
-
-	student_avail = student.availability
-
-	overlap == 0
-
-	for s in student_avail.split(","):
-		for t in t_avail.split(","):
-			if s == t:
-				overlap += 1
-
-	return overlap
-
-	# what if a student only wants one day of tutoring? (per week)
-
+        return sum ( s == t
+                     for s in student.availability
+                     for t in tutor.availability
+        )
 
 
 # Checks if a tutor is an international student
@@ -162,20 +152,7 @@ def time_match(tutor,student):
 # There is no scholarship status for student data!!
 
 def inter_match(tutor,student):
-
-	if tutor.intl_student == 1:
-
-		if student.scholarship == 1:   # student.scholarship is not an existing element (just made up)
-			return 1 
-		else:
-			return 0
-
-	else:
-		return 1
-
-		# 1 --> tutor and student can be paired
-
-		# 0 --> tutor and student cannot be paired
+        return (tutor.intl_student and student.scholarship) or not tutor.intl_student
 
 
 # Checks if tutor and student can both either meet in-person or online
@@ -202,56 +179,55 @@ def teach_method(tutor,student):
 
 
 def disability(tutor,student): #Must-have
-
 	# Student disability status isn't indicated in the data given!!
-
-	if student.disabl == 1:  # student.disabl non-existent
-		if tutor.disabl == 1:
-			return 1
-		else: 
-			return 0
-
-	else:
-		return 1
-
-		# 1 --> tutor and student can be paired
-
-		# 0 --> tutor and student cannot be paired
-
+	return (student.disabl and tutor.disabl) or not student.disabl
 
 ''' 
 	Priority Order:
 		1. Grade Level
 		2. Subject
 		3. Scholarship Status  '''
-
 def must_have(tutor,student): # Checks must-haves (time-availability, disability, scholarship status)
+	return time_match(tutor,student) >= 2) and inter_match(tutor,student) and disability(tutor,student)
 
-	if (time_match(tutor,student) >= 2) and (inter_match(tutor,student) == 1) and (disability(tutor,student) == 1):
-		return True 
+def get_weight(tutor, student):                
+	if not must_have(tutor,student):
+                return 0        
+        return subject_match(tutor,student)*10 + grade_match(tutor,student) * 10**2 + /
+time_match(tutor,student) +  teach_method(tutor,student)
 
-	else:
-		return False
+
+def make_table():
+        tutor_manager, student_manager = main()
+        students = student_manager.students
+        tutors = tutor_manager.tutors
+	matched_table = defaultdict(list)
+        for s in students:
+                tutor = s.previous_tutor_match
+                if not tutor or len(tutor) == 0:
+                        continue
+                if len(tutor) == 1:
+                        matched_table[tutor] = s
+                        students.remove(s)
+                        tutor.max_students -= 1
+                else:
+                        # TODO : ask mtm about how to handle this case
+                        print "Ambigious previous tutor for " + s + ". Please fix and rerun script."
+        while(tutors and students):
+                tutor = tutors.pop()
+                # TODO siblings                
+		best_student = max(students, lambda student: get_weight(tutor, student))
+                matched_table[tutor].append(best_student)
+                students.remove(best_student)
+                tutor.max_students -= 1
+                if tutor.max_students > 0:
+                        tutors.append(tutor)                
+        return matched_table
 
 
-def make_table(tutor_file,student_file):
-
-	matched_table = {}
-
-	for tutor in tutor_file:
-		weight_pairs = {} # Each tutor will have their own dictionary // Each key is the students name followed by their "weight"
-
-		for student in student_file:
-			if must_have(tutor,student) == True:
-				weight_pairs[student.first_name + " " + student.last_name] = subject_match(tutor,student) + grade_match(tutor,student) + time_match(tutor,student) + teach_method(tutor,student) # This is where the "weight" is calculated
-
-		max_students = [] # Students with the highest "weights"
-		max_ = max(list(weight_pairs.values())) # Highest integer value of weights
-
-		for key in weight_pairs:
-			if weight_pairs[key] == max_:
-				max_students.append(key) # key --> Name of student
-
+def get_matches():
+        matches = make_table()
+        print matches
 
 
 
