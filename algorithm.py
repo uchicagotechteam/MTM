@@ -14,68 +14,68 @@ from collections import defaultdict
 
 
 ''' subject-match : Returns how many subjects the tutor can teach that overlaps with the student's needed subjects '''
-'''
-def subject_match(tutor,student):
+
+# def subject_match(tutor,student):
 	
-	'''
-	Reading
+# 	'''
+# 	Reading
 
-	Math 		//		Geometry, Trigonometry, Calculus, Pre-Calculus
-						(have these options)
+# 	Math 		//		Geometry, Trigonometry, Calculus, Pre-Calculus
+# 						(have these options)
 
-	Science		//		Chemistry, Biology, Physics, CS
+# 	Science		//		Chemistry, Biology, Physics, CS
 
-	English		//		AP English
-	History (U.S.)		// AP World History
+# 	English		//		AP English
+# 	History (U.S.)		// AP World History
 
-	Study/Organizational Skills == Study
+# 	Study/Organizational Skills == Study
 
-	Misc 		//		French, CPS Testing, Spanish, Test-Prep, College Algebra, Japanese
-				//		"Will discuss", SAT/ACT Prep
+# 	Misc 		//		French, CPS Testing, Spanish, Test-Prep, College Algebra, Japanese
+# 				//		"Will discuss", SAT/ACT Prep
 
-				(please make this a bullet)
+# 				(please make this a bullet)
 	
 
-	All (will combine core subjects listed above-left)
-	'''
+# 	All (will combine core subjects listed above-left)
+# 	'''
 
-	# COVERING BASIC SUBJECTS (options listed for tutors)
+# 	# COVERING BASIC SUBJECTS (options listed for tutors)
 
-	subjects_ = [] # List of student subjects that are checked to see if they have overlap
+# 	subjects_ = [] # List of student subjects that are checked to see if they have overlap
 	
-	for subject in tutor.subjects.split(","):
+# 	for subject in tutor.subjects.split(","):
 
-		if "Reading Comprehension" in subject:
-			subjects_.append("Reading")
+# 		if "Reading Comprehension" in subject:
+# 			subjects_.append("Reading")
 
-		elif "Basic Math" in subject:
-			subjects_.append("Math")  # basic math up unti 8th grade-ish
+# 		elif "Basic Math" in subject:
+# 			subjects_.append("Math")  # basic math up unti 8th grade-ish
 
-		elif "English" in subject:
-			subjects_.append("English")
+# 		elif "English" in subject:
+# 			subjects_.append("English")
 
-		elif "General Science" in subject:
-			subjects_.append("Science")
+# 		elif "General Science" in subject:
+# 			subjects_.append("Science")
 
-		elif "U.S. History" in subject:
-			subjects_.append("History")  # assuming this will cover basic, elementary-school history topics 
+# 		elif "U.S. History" in subject:
+# 			subjects_.append("History")  # assuming this will cover basic, elementary-school history topics 
 
-		else:  #Study/Organizational Skills
-			subjects_.append("Study")
+# 		else:  #Study/Organizational Skills
+# 			subjects_.append("Study")
 
-	if "Math" in tutor.major:
-		subjects_.extend(["Geometry","Trigonometry","Pre-Calculus","Calculus"]) # For advanced math subjects (older students)
+# 	if "Math" in tutor.major:
+# 		subjects_.extend(["Geometry","Trigonometry","Pre-Calculus","Calculus"]) # For advanced math subjects (older students)
 
-	overlap = 0
+# 	overlap = 0
 
-	for student_subj in student.subjects.split(","):
-		for tutor_subj in subjects_:
-			if (student_subj == tutor_subj) or (student_subj in tutor.extra_subjects):
-				overlap += 1
+# 	for student_subj in student.subjects.split(","):
+# 		for tutor_subj in subjects_:
+# 			if (student_subj == tutor_subj) or (student_subj in tutor.extra_subjects):
+# 				overlap += 1
 
-	return overlap 
+# 	return overlap 
 
-'''
+
 
 def subject_match(tutor, student):
         # Assumes dropdown/ checkboxes for subject
@@ -132,12 +132,12 @@ def disability(tutor,student): #Must-have
 		2. Subject
 		3. Scholarship Status  '''
 def must_have(tutor,student): # Checks must-haves (time-availability, disability, scholarship status)
-	return time_match(tutor,student) >= 2) and inter_match(tutor,student) and disability(tutor,student)
+	return (time_match(tutor,student) >= 2) and inter_match(tutor,student) and disability(tutor,student)
 
 def get_weight(tutor, student):                
 	if not must_have(tutor,student):
                 return 0
-        return grade_match(tutor,student) * 10**3 + subject_match(tutor,student)*10**2 +/
+        return grade_match(tutor,student) * 10**3 + subject_match(tutor,student)*10**2 + \
 time_match(tutor,student) * 10 + s.scholarship + teach_method(tutor,student)
 
 
