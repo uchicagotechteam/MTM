@@ -59,7 +59,7 @@ class Tutor:
         
 #         List
         self.grades = tutor_dict[tutors_column_names["Grades"]].split(',')
-        self.avalibility = tutor_dict[tutors_column_names["Availability"]].split(',')
+        self.availability = tutor_dict[tutors_column_names["Availability"]].split(',')
     
 #         Booleans
         self.intl_student = "yes" in tutor_dict[tutors_column_names["International Student"]].lower()
