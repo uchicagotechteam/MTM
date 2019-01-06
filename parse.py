@@ -272,7 +272,8 @@ class Student_Manager:
                     continue
                 student_guardian = Guardian(guardian_dict) #create Guardian of all students in this row
 
-                self.guardians.append(student_guardian)
+                if student_guardian not in self.guardians:
+                    self.guardians.append(student_guardian)
                 
                 #start parsing students
                 for i in range(1, 5): #each row has max 4 students
