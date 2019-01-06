@@ -134,53 +134,55 @@ def disability(tutor,student): #Must-have
 def must_have(tutor,student): # Checks must-haves (time-availability, disability, scholarship status)
 	return (time_match(tutor,student) >= 2) and inter_match(tutor,student) and disability(tutor,student)
 
-def get_weight(tutor, student):                
-	if not must_have(tutor,student):
-                return 0
-        return grade_match(tutor,student) * 10**3 + subject_match(tutor,student)*10**2 + \
-time_match(tutor,student) * 10 + s.scholarship + teach_method(tutor,student)
+def get_weight(tutor, student):               
+    if (not must_have(tutor,student)):
+        return 0
+    else:
+        return grade_match(tutor,student) * 10**3 + subject_match(tutor,student)*10**2 + time_match(tutor,student) * 10 + s.scholarship + teach_method(tutor,student)
 
 
 def make_table():
-        tutor_manager, student_manager = main()
-        students = student_manager.students
-        # sort so that 
-        tutors = tutor_manager.tutors.sort(
-                key = lambda k : k.work_study or k.onboarded)
-	matched_table = defaultdict(list)
-        for s in students:
-                tutor = s.previous_tutor_match
-                if not tutor or len(tutor) == 0:
-                        continue
-                if len(tutor) == 1:
-                        matched_table[tutor] = s
-                        students.remove(s)
-                        tutor.max_students -= 1
-                else:
-                        # TODO : ask mtm about how to handle this case
-                        print "Ambigious previous tutor for " + s + ". Please fix and rerun script."
-        while(tutors and students):
-                tutor = tutors.pop()
-                # TODO siblings                
-		best_student = max(students, lambda student: get_weight(tutor, student))
-                matched_table[tutor].append(best_student)
-                students.remove(best_student)
-                tutor.max_students -= 1
-                if tutor.max_students > 0:
-                        tutors.append(tutor)                
-        return matched_table
+    tutor_manager, student_manager = main()
+    students = student_manager.students
+    # sort so that 
+    tutors = tutor_manager.tutors.sort(
+            key = lambda k : k.work_study or k.onboarded)
+    matched_table = defaultdict(list)
+    for s in students:
+            tutor = s.previous_tutor_match
+            if not tutor or len(tutor) == 0:
+                    continue
+            if len(tutor) == 1:
+                    tutor = tutor[0]
+                    matched_table[tutor] = s
+                    students.remove(s)
+                    tutor.max_students -= 1
+            else:
+                    # TODO : ask mtm about how to handle this case
+                    print("Ambigious previous tutor for " + s + ". Please fix and rerun script.")
+                    
+    while(tutors and students):
+        tutor = tutors.pop()
+            # TODO siblings                
+        best_student = max(students, lambda student: get_weight(tutor, student))
+        matched_table[tutor].append(best_student)
+        students.remove(best_student)
+        tutor.max_students -= 1
+        if tutor.max_students > 0:
+            tutors.append(tutor)                
+    return matched_table
 
 
 def get_matches():
         matches = make_table()
-        print matches
+        print(matches)
 
 
 
 	
 
 
-
+get_matches()
 
 
 
