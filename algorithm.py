@@ -209,14 +209,45 @@ def make_table():
     return matched_table
 
 
+def pairs_to_csv(matches):
+    # tutor name, tutor email, guardian name, student name, guardian email
+    csv_string = ""
+    
+    def append_item(i, csv_string):
+        csv_string += str(i) + ","
+        return csv_string
+
+    def finish_line(csv_string):
+        csv_string += "\n"
+        return csv_string
+    
+    def empty_if_0(i):
+        return "" if i == 0 else i
+    
+    csv_string = append_item("Tutor Name", csv_string)
+    csv_string = append_item("Tutor Email", csv_string)
+    csv_string = append_item("Guardian Name", csv_string)
+    csv_string = append_item("Guardian Email", csv_string)
+    csv_string = append_item("Student Name", csv_string)
+    
+    csv_string = finish_line(csv_string)
+    
+    for tutor, students in matches.items():
+        for student in students:
+            csv_string = append_item(tutor.name, csv_string)
+            csv_string = append_item(tutor.email, csv_string)
+            guardian = student.guardian
+            csv_string = append_item(guardian.first_name + empty_if_0(guardian.last_name), csv_string)
+            csv_string = append_item(guardian.email, csv_string)
+            csv_string = append_item(student.first_name + empty_if_0(student.last_name), csv_string)
+            csv_string = finish_line(csv_string)
+    return csv_string        
+
 def get_matches():
         matches = make_table()
-        print(matches)
-
-
-
-	
-
+        with open("output.csv", "w+") as file:
+            csv_string = pairs_to_csv(matches)            
+            file.write(csv_string)
 
 get_matches()
 

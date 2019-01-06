@@ -29,7 +29,7 @@ tutors_column_names = {
 #     work study
     "Work Study" : "Are you work study?",
 #     if the tutor is already onboarded
-    "Onboarded" : "Are you onboarded?"
+    "Onboarded" : "Are you onboarded?",
 }
 
 class Tutor_Method(Enum):
@@ -56,6 +56,7 @@ class Tutor:
         self.name = tutor_dict[tutors_column_names["Name"]]
         self.subjects = tutor_dict[tutors_column_names["Subjects"]]
         self.major = tutor_dict[tutors_column_names["Major"]]
+        self.email = tutor_dict[tutors_column_names["Email"]]
         
 #         List
         self.grades = tutor_dict[tutors_column_names["Grades"]].split(',')
@@ -132,7 +133,19 @@ class Guardian:
 
     def __str__(self):
         return f'Guardian({self.first_name} {self.last_name}, {self.email})'
-
+    
+students_column_names = {
+    "Disabled" : "Disabled",
+    "First Name" : "First Name",
+    "Last Name" : "Last Name",
+    "Grade" : "Student Grade",
+    "School" : "What school does your student attend?",
+    "Subjects" : "What subjects need to be focused on? Please be as specific as possible. For example, if your student is in high school, instead of math please indicate topics like Geometry or Algebra I.",
+    "Tutor Method" : "Would you prefer in-person or on-line tutoring (via Skype or similar software)?",
+    "Frequency" : "How many times a week would you like to receive tutoring?",
+    "Availability" : "When would you be available for tutoring?",
+    "Previous Tutor" : "If you would like to continue to work with a previous tutor, what is their name?"
+}
 class Student:
     '''
     Every instance of Student represents one student. It requires that Tutor_Manager be run first.
@@ -149,42 +162,28 @@ class Student:
         self.previous_tutor_name = None
         self.guardian = guardian
         self.disabl = False
-        
-        for key in student_dict.keys():
-            if 'DISABLED' in key.upper():
-#                 CHECK THIS!
-                self.disabl = student_dict[key] == "Yes"
-            if 'FIRST NAME' in key.upper():
-                self.first_name = student_dict[key]
-            elif 'LAST NAME' in key.upper():
-                self.last_name = student_dict[key]
-            elif 'GRADE' in key.upper(): 
-                self.grade = student_dict[key] #int
-            elif 'SCHOOL' in key.upper():
-                self.school = student_dict[key]
-            elif 'SUBJECTS' in key.upper():
-                self.subjects = student_dict[key]
-            elif 'IN-PERSON OR ON-LINE' in key.upper():
-                tutor_method_preference = student_dict[key]
-                if tutor_method_preference == "In-person":
-                    self.tutor_method = Tutor_Method.IN_PERSON
-                elif tutor_method_preference == "Either is fine":
-                    self.tutor_method = Tutor_Method.NO_PREFERENCE
-                else:
-                    self.tutor_method = Tutor_Method.ONLINE_ONLY
-            elif 'TIMES A WEEK' in key.upper():
-                self.frequency = student_dict[key] 
-            elif 'AVAILABLE FOR TUTORING' in key.upper():
-                if student_dict[key] == 0:
-                    self.availability = []
-                else:
-                    self.availability = student_dict[key].split(',')
-            elif 'PREVIOUS TUTOR' in key.upper():
-                self.previous_tutor_name = student_dict[key] #if no preference, value should be 0
-
-            #elif 'MAROON TUTOR MATCH BEFORE' in key.upper():
-                #self.return_student = student_dict[key]
-                
+        self.disabl = student_dict.get(students_column_names["Disabled"], "No") == "Yes"
+        self.first_name = student_dict[students_column_names["First Name"]]
+        self.last_name = student_dict[students_column_names["Last Name"]]
+        self.grade = student_dict[students_column_names["Grade"]] #int
+        self.school = student_dict[students_column_names["School"]]
+        self.subjects = student_dict[students_column_names["Subjects"]]
+        tutor_method_preference = student_dict[students_column_names["Tutor Method"]]
+        if tutor_method_preference == "In-person":
+            self.tutor_method = Tutor_Method.IN_PERSON
+        elif tutor_method_preference == "Either is fine":
+            self.tutor_method = Tutor_Method.NO_PREFERENCE
+        else:
+            self.tutor_method = Tutor_Method.ONLINE_ONLY
+        self.frequency = student_dict[students_column_names["Frequency"]] 
+        self.availability = []
+        if student_dict[students_column_names["Availability"]] != 0:
+            self.availability = student_dict[students_column_names["Availability"]].split(',')
+        if self.previous_tutor_name == 0:
+            self.previous_tutor_name = None
+        else:
+            self.previous_tutor_name = student_dict[students_column_names["Previous Tutor"]]
+            
         if self.previous_tutor_name: #student has a previous tutor preference, try to find a match within tutors list
             def find_previous_tutors(tutor_list):
                 '''
@@ -216,12 +215,18 @@ class Student:
                 return match
             self.previous_tutor_match = find_previous_tutors(all_tutors) #all_tutors is the list of all tutors from Tutor_Manager
 
-
     def __repr__(self):
         return f'Student({self.first_name}, {self.last_name})'
 
     def __str__(self):
         return f'Student({self.first_name}, {self.last_name})'
+
+def representsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
 
 class Student_Manager:
     '''
@@ -302,11 +307,25 @@ class Student_Manager:
                     student_dict = {}
 
                     #for each column in the range of the given student columns, add key and value to empty student_dict
-                    for i in range(student_i, end_student_i):
-                        col_name = df.columns[i] #find column name associated with column index
+                    for j in range(student_i, end_student_i):
+                        col_name = df.columns[j] #find column name associated with column index
                         val = row.get(col_name) #get value in the row for that column name
+                        
+                        def trim_student_number(col_name):
+                            trimmed_arr = col_name.split()
+                            if len(trimmed_arr) >= 2:
+                                if trimmed_arr[0].upper() == "Student".upper() and representsInt(trimmed_arr[1]):
+                                    col_name = " ".join(trimmed_arr[2:])
+                            trimmed_arr = col_name.split('.')
+                            
+                            if representsInt(trimmed_arr[-1]):
+                                col_name = ".".join(trimmed_arr[:-1])
+                                
+                            return col_name
+                        col_name = trim_student_number(col_name)
                         student_dict[col_name] = val #add column name as key and set value
-
+                        
+#                        if len(col_name.split()) > 2 and col_name.split()[0].upper() == "Student".upper() and col_name.split()[1].upper() == "".upper() 
                     students.append(Student(student_dict, student_guardian, all_tutors))
 
             return students
@@ -623,3 +642,40 @@ def main(filename1 = 'tutor.csv', filename2 = 'student.csv'):
 # def main(filename1 = 'tutor.csv', filename2 = 'student.csv'):
 # 	all_tutors = Tutor_Manager(filename1)
 # 	all_students = Student_Manager(filename2)
+    
+
+'''        for key in student_dict.keys():
+            if students_column_names["Disabled"].upper() in key.upper():
+#                 CHECK THIS!
+                self.disabl = student_dict[key] == "Yes"
+            if 'FIRST NAME' in key.upper():
+                self.first_name = student_dict[key]
+            elif 'LAST NAME' in key.upper():
+                self.last_name = student_dict[key]
+            elif 'GRADE' in key.upper(): 
+                self.grade = student_dict[key] #int
+            elif 'SCHOOL' in key.upper():
+                self.school = student_dict[key]
+            elif 'SUBJECTS' in key.upper():
+                self.subjects = student_dict[key]
+            elif 'IN-PERSON OR ON-LINE' in key.upper():
+                tutor_method_preference = student_dict[key]
+                if tutor_method_preference == "In-person":
+                    self.tutor_method = Tutor_Method.IN_PERSON
+                elif tutor_method_preference == "Either is fine":
+                    self.tutor_method = Tutor_Method.NO_PREFERENCE
+                else:
+                    self.tutor_method = Tutor_Method.ONLINE_ONLY
+            elif 'TIMES A WEEK' in key.upper():
+                self.frequency = student_dict[key] 
+            elif 'AVAILABLE FOR TUTORING' in key.upper():
+                if student_dict[key] == 0:
+                    self.availability = []
+                else:
+                    self.availability = student_dict[key].split(',')
+            elif 'PREVIOUS TUTOR' in key.upper():
+                self.previous_tutor_name = student_dict[key] #if no preference, value should be 0
+
+            #elif 'MAROON TUTOR MATCH BEFORE' in key.upper():
+                #self.return_student = student_dict[key]
+'''
