@@ -46,6 +46,19 @@ guardians_column_names = {
     "Scholarship" : "Are you planning on applying for a scholarship?"
 }
 
+students_column_names = {
+    "Disabled" : "Not Implemented Yet",
+    "First Name" : "First Name",
+    "Last Name" : "Last Name",
+    "Grade" : "Student Grade",
+    "School" : "What school does your student attend?",
+    "Subjects" : "What subjects need to be focused on? Please be as specific as possible. For example, if your student is in high school, instead of math please indicate topics like Geometry or Algebra I.",
+    "Tutor Method" : "Would you prefer in-person or on-line tutoring (via Skype or similar software)?",
+    "Frequency" : "How many times a week would you like to receive tutoring?",
+    "Availability" : "When would you be available for tutoring?",
+    "Previous Tutor" : "If you would like to continue to work with a previous tutor, what is their name?"
+}
+
 class Tutor:
 
     def __init__(self, tutor_dict):
@@ -134,18 +147,6 @@ class Guardian:
     def __str__(self):
         return f'Guardian({self.first_name} {self.last_name}, {self.email})'
     
-students_column_names = {
-    "Disabled" : "Disabled",
-    "First Name" : "First Name",
-    "Last Name" : "Last Name",
-    "Grade" : "Student Grade",
-    "School" : "What school does your student attend?",
-    "Subjects" : "What subjects need to be focused on? Please be as specific as possible. For example, if your student is in high school, instead of math please indicate topics like Geometry or Algebra I.",
-    "Tutor Method" : "Would you prefer in-person or on-line tutoring (via Skype or similar software)?",
-    "Frequency" : "How many times a week would you like to receive tutoring?",
-    "Availability" : "When would you be available for tutoring?",
-    "Previous Tutor" : "If you would like to continue to work with a previous tutor, what is their name?"
-}
 class Student:
     '''
     Every instance of Student represents one student. It requires that Tutor_Manager be run first.
