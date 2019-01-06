@@ -131,15 +131,38 @@ def disability(tutor,student): #Must-have
 		1. Grade Level
 		2. Subject
 		3. Scholarship Status  '''
-def must_have(tutor,student): # Checks must-haves (time-availability, disability, scholarship status)
-	return (time_match(tutor,student) >= 2) and inter_match(tutor,student) and disability(tutor,student)
+# Checks must-haves (time-availability, disability, scholarship status)
+def must_have(tutor,student):
+	return (time_match(tutor,student) >= 2) and inter_match(tutor,student) and \
+                disability(tutor,student)
 
 def get_weight(tutor, student):               
     if (not must_have(tutor,student)):
         return 0
     else:
-        return grade_match(tutor,student) * 10**3 + subject_match(tutor,student)*10**2 + time_match(tutor,student) * 10 + s.scholarship + teach_method(tutor,student)
+        return grade_match(tutor,student) * 10**3 + \
+                subject_match(tutor,student)*10**2 + \
+                time_match(tutor,student) * 10 + \
+                s.scholarship + \
+                teach_method(tutor,student)
 
+def get_sibling_weight(tutor, siblings):
+        if (tutor.max_students < len(siblings)):
+                return 0
+        weight = 0
+        for student in siblings:
+                if not (grade_match(tutor, student) and subject_match(tutor, student)):
+                        return 0
+                weight += get_weight(tutor, student)
+        return weight
+
+def match_family(tutor, siblings, matched_table, tutors, students):
+        for student in siblings:
+                matched_table[tutor].append(student)
+                students.remove(student)
+                tutor.max_students -= 1
+        if tutor.max_students == 0:
+                tutors.remove(tutor)
 
 def make_table():
     tutor_manager, student_manager = main()
@@ -148,8 +171,18 @@ def make_table():
     tutor_manager.tutors.sort(
             key = lambda k : k.work_study or k.onboarded)
     tutors = tutor_manager.tutors
-    
+    families = [
+            student_manager.match_guardian(g)
+            for g in student_manager.guardians
+    ]
     matched_table = defaultdict(list)
+    # attempt to match siblings to the same tutor
+    for family in families:
+            if len(family) > 1:
+                    best_tutor = max(tutors, key=lambda tutor: get_sibling_weight(tutor, family))
+                    if (get_sibling_weight(best_tutor, family) != 0):
+                            match_family(best_tutor, family, matched_table, tutors, students)
+
     for s in students:
             tutor = s.previous_tutor_match
             if not tutor or len(tutor) == 0:
