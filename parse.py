@@ -236,6 +236,7 @@ class Student_Manager:
         '''
         self.students = []
         self.guardians = []
+        
         with open(filename, 'rb') as f:
             result = chardet.detect(f.read()) #identify encoding code needed for pandas read_csv
             
