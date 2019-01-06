@@ -235,7 +235,7 @@ class Student_Manager:
         all_tutors: Tutor_Manager object with list of all tutors
         '''
         self.students = []
-
+        self.guardians = []
         with open(filename, 'rb') as f:
             result = chardet.detect(f.read()) #identify encoding code needed for pandas read_csv
             
@@ -272,6 +272,8 @@ class Student_Manager:
                     continue
                 student_guardian = Guardian(guardian_dict) #create Guardian of all students in this row
 
+                self.guardians.append(student_guardian)
+                
                 #start parsing students
                 for i in range(1, 5): #each row has max 4 students
                     name = f'Student {i} First Name'

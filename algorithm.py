@@ -171,7 +171,8 @@ def make_table():
         students.remove(best_student)
         tutor.max_students -= 1
         if tutor.max_students > 0:
-            tutors.append(tutor)                
+            tutors.append(tutor)
+            
     return matched_table
 
 
