@@ -15,123 +15,80 @@ from collections import defaultdict
 
 ''' subject-match : Returns how many subjects the tutor can teach that overlaps with the student's needed subjects '''
 
-def subject_match(tutor,student):
+# def subject_match(tutor,student):
 	
-	'''
-	Reading
+# 	'''
+# 	Reading
 
-	Math 		//		Geometry, Trigonometry, Calculus, Pre-Calculus
-						(have these options)
+# 	Math 		//		Geometry, Trigonometry, Calculus, Pre-Calculus
+# 						(have these options)
 
-	Science		//		Chemistry, Biology, Physics, CS
+# 	Science		//		Chemistry, Biology, Physics, CS
 
-	English		//		AP English
-	History (U.S.)		// AP World History
+# 	English		//		AP English
+# 	History (U.S.)		// AP World History
 
-	Study/Organizational Skills == Study
+# 	Study/Organizational Skills == Study
 
-	Misc 		//		French, CPS Testing, Spanish, Test-Prep, College Algebra, Japanese
-				//		"Will discuss", SAT/ACT Prep
+# 	Misc 		//		French, CPS Testing, Spanish, Test-Prep, College Algebra, Japanese
+# 				//		"Will discuss", SAT/ACT Prep
 
-				(please make this a bullet)
+# 				(please make this a bullet)
 	
 
-	All (will combine core subjects listed above-left)
-	'''
+# 	All (will combine core subjects listed above-left)
+# 	'''
 
-	# COVERING BASIC SUBJECTS (options listed for tutors)
+# 	# COVERING BASIC SUBJECTS (options listed for tutors)
 
-	subjects_ = [] # List of student subjects that are checked to see if they have overlap
+# 	subjects_ = [] # List of student subjects that are checked to see if they have overlap
 	
-	for subject in tutor.subjects.split(","):
+# 	for subject in tutor.subjects.split(","):
 
-		if "Reading Comprehension" in subject:
-			subjects_.append("Reading")
+# 		if "Reading Comprehension" in subject:
+# 			subjects_.append("Reading")
 
-		elif "Basic Math" in subject:
-			subjects_.append("Math")  # basic math up unti 8th grade-ish
+# 		elif "Basic Math" in subject:
+# 			subjects_.append("Math")  # basic math up unti 8th grade-ish
 
-		elif "English" in subject:
-			subjects_.append("English")
+# 		elif "English" in subject:
+# 			subjects_.append("English")
 
-		elif "General Science" in subject:
-			subjects_.append("Science")
+# 		elif "General Science" in subject:
+# 			subjects_.append("Science")
 
-		elif "U.S. History" in subject:
-			subjects_.append("History")  # assuming this will cover basic, elementary-school history topics 
+# 		elif "U.S. History" in subject:
+# 			subjects_.append("History")  # assuming this will cover basic, elementary-school history topics 
 
-		else:  #Study/Organizational Skills
-			subjects_.append("Study")
+# 		else:  #Study/Organizational Skills
+# 			subjects_.append("Study")
 
-	if "Math" in tutor.major:
-		subjects_.extend(["Geometry","Trigonometry","Pre-Calculus","Calculus"]) # For advanced math subjects (older students)
+# 	if "Math" in tutor.major:
+# 		subjects_.extend(["Geometry","Trigonometry","Pre-Calculus","Calculus"]) # For advanced math subjects (older students)
 
-	overlap = 0
+# 	overlap = 0
 
-	for student_subj in student.subjects.split(","):
-		for tutor_subj in subjects_:
-			if (student_subj == tutor_subj) or (student_subj in tutor.extra_subjects):
-				overlap += 1
+# 	for student_subj in student.subjects.split(","):
+# 		for tutor_subj in subjects_:
+# 			if (student_subj == tutor_subj) or (student_subj in tutor.extra_subjects):
+# 				overlap += 1
 
-	return overlap 
+# 	return overlap 
 
 
 
-''' grade-match : Returns 1 if student grade satisfies tutor's indicated grade range '''
+def subject_match(tutor, student):
+        # Assumes dropdown/ checkboxes for subject
+        # TODO : Advanced subjects 
+        # basic subject matching
+        return student.subject in tutor.subjects
+
+
+''' grade-match : Returns 1 if student grade satisfies tutor's indicated grade range 
+*** We're changing things to work with an easier to maintain google form'''
 
 def grade_match(tutor,student):  
-	
-	''' Kindergarten - 2nd
-		3rd - 5th
-		6th - 8th
-		High School ''' # the grades for Tutor are separated by "," but still are strings
-
-	grade_range = []
-
-	# Assigning indicated grade intervals in tutor_dict to integer
-
-	for grade in tutor.grades:
-		if grade == "Kindergarten - 2nd Grade":
-			grade_range.append(1)
-		elif grade == "3rd - 5th Grade":
-			grade_range.append(2)
-		elif grade == "6th - 8th Grade":
-			grade_range.append(3)
-		else:  # High School
-			grade_range.append(4)
-
-	# Assigning student grade to integer based on tutor's ranges
-
-	if student.grade == "K" or student.grade == "Pre-K":
-		grade_student == 1
-
-	else:
-
-		if student.grade[0:2].isdigit():
-			grade_student == 4  #High School
-
-		elif student.grade[0].isdigit():
-
-			grade_ == int(student.grade[0])
-
-			if grade_ <= 2:
-				grade_student == 1
-			elif grade_ <= 5:
-				grade_student == 2
-			elif grade <= 8:
-				grade_student == 3
-			else:
-				grade_student == 4   # Case for 9th graders
-
-	for grade in grade_range:
-		if grade == grade_student:
-			return 1
-
-	return 0
-
-
-
-
+        return student.grade in tutor.grades
 
 # Checks if the tutor and student both have overlapping time availabilities
 
@@ -158,25 +115,12 @@ def inter_match(tutor,student):
 # Checks if tutor and student can both either meet in-person or online
 
 def teach_method(tutor,student):
-
-	if student.method == "In-person":
-		method = 1
-
-	elif student.method == "Either is fine":
-		method = 0
-
-	else: #online
-		method = -1
-
-	if tutor.tutor_method == method: # 2 means tutor and student have same preferences
-		return 2					 #      (ex: On-line / On-line)
-
-	elif tutor.tutor_method == 0:    # Tutor is fine with both in-person and on-line
-		return 1
-
-	else:                            # Tutor and Student have conflicting preferences
-		return 0
-
+        if tutor.tutor_method == student.tutor_method:
+                return 2
+        elif (tutor.tutor_method == Tutor_Method.NO_PREFERENCE or
+            student.tutor_method == Tutor_Method.NO_PREFERENCE):
+                return 1
+        return 0
 
 def disability(tutor,student): #Must-have
 	# Student disability status isn't indicated in the data given!!
@@ -188,19 +132,21 @@ def disability(tutor,student): #Must-have
 		2. Subject
 		3. Scholarship Status  '''
 def must_have(tutor,student): # Checks must-haves (time-availability, disability, scholarship status)
-	return time_match(tutor,student) >= 2) and inter_match(tutor,student) and disability(tutor,student)
+	return (time_match(tutor,student) >= 2) and inter_match(tutor,student) and disability(tutor,student)
 
 def get_weight(tutor, student):                
 	if not must_have(tutor,student):
-                return 0        
-        return subject_match(tutor,student)*10 + grade_match(tutor,student) * 10**2 + /
-time_match(tutor,student) +  teach_method(tutor,student)
+                return 0
+        return grade_match(tutor,student) * 10**3 + subject_match(tutor,student)*10**2 + \
+time_match(tutor,student) * 10 + s.scholarship + teach_method(tutor,student)
 
 
 def make_table():
         tutor_manager, student_manager = main()
         students = student_manager.students
-        tutors = tutor_manager.tutors
+        # sort so that 
+        tutors = tutor_manager.tutors.sort(
+                key = lambda k : k.work_study or k.onboarded)
 	matched_table = defaultdict(list)
         for s in students:
                 tutor = s.previous_tutor_match
