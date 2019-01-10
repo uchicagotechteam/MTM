@@ -275,6 +275,7 @@ class Student_Manager:
 
                 #create Guardian of all student(s) in this row
                 guardian_dict = guardian_info()
+#                print(guardian_dict)
                 if (guardian_dict == {}):
                     continue
                 student_guardian = Guardian(guardian_dict) #create Guardian of all students in this row
@@ -325,9 +326,10 @@ class Student_Manager:
                             return col_name
                         col_name = trim_student_number(col_name)
                         student_dict[col_name] = val #add column name as key and set value
-                        
 #                        if len(col_name.split()) > 2 and col_name.split()[0].upper() == "Student".upper() and col_name.split()[1].upper() == "".upper() 
-                    students.append(Student(student_dict, student_guardian, all_tutors))
+                    student_made = Student(student_dict, student_guardian, all_tutors)
+                    #print(student_made)
+                    students.append(student_made)
 
             return students
 

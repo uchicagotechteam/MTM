@@ -183,18 +183,24 @@ def make_table():
                     if (get_sibling_weight(best_tutor, family) != 0):
                             match_family(best_tutor, family, matched_table, tutors, students)
 
+    to_remove = []
+
     for s in students:
             tutor = s.previous_tutor_match
+            print(s)
             if not tutor or len(tutor) == 0:
                     continue
             if len(tutor) == 1:
                     tutor = tutor[0]
                     matched_table[tutor] = [s]
-                    students.remove(s)
+                    to_remove.append(s)
                     tutor.max_students -= 1
             else:
                     # TODO : ask mtm about how to handle this case
                     print("Ambigious previous tutor for " + s + ". Please fix and rerun script.")
+
+    for student_to_remove in to_remove:
+        students.remove(student_to_remove)
 
     while(tutors and students):
         tutor = tutors.pop()
