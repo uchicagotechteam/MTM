@@ -19,8 +19,6 @@ tutors_column_names = {
     "International Student" : "Are you an international student? (We need this information to ensure you're paid directly by MTM, which keeps you from violating the terms of your visa.)",
 #     if tutor has a disability
     "Disability" : "Are you comfortable working with students with disabilities including but not limited to autism, ADHD, and dyslexia? (Your honesty with this question helps us ensure that all students get a tutor who can fully address their needs.)",
-#     the method in which the tutor would be willing to tutor the child
-    "Tutor Method" : "Would you prefer to do in-person or online (i.e. via Skype, webwhiteboard, and other programs) tutoring?",
 #     if the tutor would be willing to do standardized test prep
     "Test Prep" : "Would you be willing to do standardized test prep for elementary schoolers within the one-on-one tutoring context? (We will provide the foundational resources for you.)",
 #     the max number of students tutor is willing to take
@@ -62,7 +60,6 @@ students_column_names = {
     "English",
     "Foreign Language"
     ],
-    "Tutor Method" : "Would you prefer in-person or on-line tutoring (via Skype or similar software)?",
     "Frequency" : "How many times a week would you like to receive tutoring?",
     "Availability" : "When would you be available for tutoring?",
     "Previous Tutor" : "If you would like to continue to work with a previous tutor, what is their name?If you would like to continue to work with a previous tutor, what is their name (please include first and last, if possible)?"
@@ -95,16 +92,7 @@ class Tutor:
         self.intl_student = "yes" in tutor_dict[tutors_column_names["International Student"]].lower()
         self.disabl = "yes" in tutor_dict[tutors_column_names["Disability"]].lower()
         self.test_prep = "yes" in tutor_dict[tutors_column_names["Test Prep"]].lower()
-        
-#         Enums
-        tutor_method_preference = tutor_dict[tutors_column_names["Tutor Method"]]
-        if tutor_method_preference == "In-person":
-            self.tutor_method = Tutor_Method.IN_PERSON
-        elif tutor_method_preference == "Either is fine":
-            self.tutor_method = Tutor_Method.NO_PREFERENCE
-        else:
-            self.tutor_method = Tutor_Method.ONLINE_ONLY
-            
+           
 #           Integers
         self.max_students = int(tutor_dict[tutors_column_names["Max Students"]])
         self.num_students = 0
@@ -193,13 +181,6 @@ class Student:
                 self.subjects.append(student_dict[col_name])
         self.subjects = ",".join(self.subjects)
 
-        tutor_method_preference = student_dict.get(students_column_names["Tutor Method"]], "")
-        if tutor_method_preference == "In-person":
-            self.tutor_method = Tutor_Method.IN_PERSON
-        elif tutor_method_preference == "Either is fine":
-            self.tutor_method = Tutor_Method.NO_PREFERENCE
-        else:
-            self.tutor_method = Tutor_Method.ONLINE_ONLY
         self.frequency = student_dict[students_column_names["Frequency"]] 
         self.availability = []
         if student_dict[students_column_names["Availability"]] != 0:
