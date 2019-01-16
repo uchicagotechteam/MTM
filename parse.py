@@ -47,16 +47,24 @@ guardians_column_names = {
 }
 
 students_column_names = {
-    "Disabled" : "Not Implemented Yet",
+    "Disabled" : "Has your student been diagnosed with a learning disability and/or do they require special learning accommodations?",
     "First Name" : "First Name",
     "Last Name" : "Last Name",
     "Grade" : "Student Grade",
     "School" : "What school does your student attend?",
-    "Subjects" : "What subjects need to be focused on? Please be as specific as possible. For example, if your student is in high school, instead of math please indicate topics like Geometry or Algebra I.",
+    "Subjects" : 
+    [
+    "What subjects does your student require tutoring in?", 
+    "Math", 
+    "Science", 
+    "History/Social Science", 
+    "English",
+    "Foreign Language"
+    ],
     "Tutor Method" : "Would you prefer in-person or on-line tutoring (via Skype or similar software)?",
     "Frequency" : "How many times a week would you like to receive tutoring?",
     "Availability" : "When would you be available for tutoring?",
-    "Previous Tutor" : "If you would like to continue to work with a previous tutor, what is their name?"
+    "Previous Tutor" : "If you would like to continue to work with a previous tutor, what is their name?If you would like to continue to work with a previous tutor, what is their name (please include first and last, if possible)?"
 }
 
 class Tutor:
@@ -167,9 +175,17 @@ class Student:
         self.first_name = student_dict[students_column_names["First Name"]]
         self.last_name = student_dict[students_column_names["Last Name"]]
         self.grade = student_dict[students_column_names["Grade"]] #int
+        self.grade = "".join([c for c in self.grade if str.isdigit(c)])
+
         self.school = student_dict[students_column_names["School"]]
-        self.subjects = student_dict[students_column_names["Subjects"]]
-        tutor_method_preference = student_dict[students_column_names["Tutor Method"]]
+
+        self.subjects = [];
+        for col_name in students_column_names["Subjects"]:
+            if student_dict[col_name] != 0:
+                subjects.append(student_dict[col_name])
+        self.subjects = ",".join(self.subjects)
+
+        tutor_method_preference = student_dict.get(students_column_names["Tutor Method"]], "")
         if tutor_method_preference == "In-person":
             self.tutor_method = Tutor_Method.IN_PERSON
         elif tutor_method_preference == "Either is fine":
