@@ -11,7 +11,8 @@ tutors_column_names = {
 #     major of the tutor
     "Major" : "Intended Major (it's okay if you're Undecided!)",
 #     the subjects the tutor is comfortable helping with (Comma separated)
-    "Subjects" : "What subjects are you comfortable helping your student with?",
+    "Subjects" : 
+    ["What subjects are you comfortable helping your student with?"],
 #     the grades of the tutor is comfortable tutoring (Comma separated i.e. 5,6,7,8)
     "Grades" : "What grade levels are you comfortable tutoring? (please check all that apply)",
 #     if tutor is an international student
@@ -75,7 +76,14 @@ class Tutor:
         '''
 #         Strings
         self.name = tutor_dict[tutors_column_names["Name"]]
-        self.subjects = tutor_dict[tutors_column_names["Subjects"]]
+ 
+        self.subjects = [];
+        for col_name in tutors_column_names["Subjects"]:
+            if tutor_dict[col_name] != 0:
+                self.subjects.append(tutor_dict[col_name])
+
+        self.subjects = ",".join(self.subjects)
+
         self.major = tutor_dict[tutors_column_names["Major"]]
         self.email = tutor_dict[tutors_column_names["Email"]]
         
@@ -182,7 +190,7 @@ class Student:
         self.subjects = [];
         for col_name in students_column_names["Subjects"]:
             if student_dict[col_name] != 0:
-                subjects.append(student_dict[col_name])
+                self.subjects.append(student_dict[col_name])
         self.subjects = ",".join(self.subjects)
 
         tutor_method_preference = student_dict.get(students_column_names["Tutor Method"]], "")
