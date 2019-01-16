@@ -220,7 +220,7 @@ def pairs_to_csv(matches):
     csv_string = ""
     
     def append_item(i, csv_string):
-        csv_string += str(i) + ","
+        csv_string += empty_if_0(str(i)).replace(",", " & ") + ","
         return csv_string
 
     def finish_line(csv_string):
@@ -229,23 +229,47 @@ def pairs_to_csv(matches):
     
     def empty_if_0(i):
         return "" if i == 0 else i
-    
-    csv_string = append_item("Tutor Name", csv_string)
-    csv_string = append_item("Tutor Email", csv_string)
-    csv_string = append_item("Guardian Name", csv_string)
+
+# «Guardian_Email_Address»
+# «Tutor_Email»
+# «Guardian_Preferred_Title» 
+# «Guardian_Last_Name»
+# «Student_1_First_Name»
+# «Student_Grade» «What_school_does_your_student_attend» «What_subjects_need_to_be_focused_on_Pl»
+# «Tutor_First»
+# «Student_2_First_Name»
+# «Student_3_First_Name»
+# «Student_4_First_Name»
+# «Tutor_2_First»
+# «Tutor_2_Email»
+# «Scholarship_status_Scholarship_Pendin»
+
     csv_string = append_item("Guardian Email", csv_string)
+    csv_string = append_item("Tutor Email", csv_string)
+    csv_string = append_item("Guardian Preferred Title", csv_string)
+    csv_string = append_item("Guardian Name", csv_string)
     csv_string = append_item("Student Name", csv_string)
+    csv_string = append_item("Student Grade", csv_string)
+    csv_string = append_item("School", csv_string)
+    csv_string = append_item("Subjects", csv_string)
+    csv_string = append_item("Tutor Name", csv_string)
+    csv_string = append_item("Scholarship Status", csv_string)
     
     csv_string = finish_line(csv_string)
     
     for tutor, students in matches.items():
         for student in students:
-            csv_string = append_item(tutor.name, csv_string)
-            csv_string = append_item(tutor.email, csv_string)
             guardian = student.guardian
-            csv_string = append_item(guardian.first_name + empty_if_0(guardian.last_name), csv_string)
             csv_string = append_item(guardian.email, csv_string)
+            csv_string = append_item(tutor.email, csv_string)
+            csv_string = append_item(guardian.title, csv_string)
+            csv_string = append_item(guardian.first_name + empty_if_0(guardian.last_name), csv_string)
             csv_string = append_item(student.first_name + empty_if_0(student.last_name), csv_string)
+            csv_string = append_item(student.grade, csv_string)
+            csv_string = append_item(student.school, csv_string)
+            csv_string = append_item(student.subjects, csv_string)
+            csv_string = append_item(tutor.name, csv_string)
+            csv_string = append_item(guardian.scholarship, csv_string)
             csv_string = finish_line(csv_string)
     return csv_string        
 
