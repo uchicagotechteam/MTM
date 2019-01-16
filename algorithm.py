@@ -1,91 +1,14 @@
 from parse import *
 from collections import defaultdict
 
-
-#To-Do
-# siblings
-
-
-# Must-haves: 
-
-'''	 Tutors should have at least two days of overlap with students 
-     in their indicated availability 
-	 I checked the Tutor class and there wasn't any attribute for availability (?) '''
-
-
-''' subject-match : Returns how many subjects the tutor can teach that overlaps with the student's needed subjects '''
-
-# def subject_match(tutor,student):
-	
-# 	'''
-# 	Reading
-
-# 	Math 		//		Geometry, Trigonometry, Calculus, Pre-Calculus
-# 						(have these options)
-
-# 	Science		//		Chemistry, Biology, Physics, CS
-
-# 	English		//		AP English
-# 	History (U.S.)		// AP World History
-
-# 	Study/Organizational Skills == Study
-
-# 	Misc 		//		French, CPS Testing, Spanish, Test-Prep, College Algebra, Japanese
-# 				//		"Will discuss", SAT/ACT Prep
-
-# 				(please make this a bullet)
-	
-
-# 	All (will combine core subjects listed above-left)
-# 	'''
-
-# 	# COVERING BASIC SUBJECTS (options listed for tutors)
-
-# 	subjects_ = [] # List of student subjects that are checked to see if they have overlap
-	
-# 	for subject in tutor.subjects.split(","):
-
-# 		if "Reading Comprehension" in subject:
-# 			subjects_.append("Reading")
-
-# 		elif "Basic Math" in subject:
-# 			subjects_.append("Math")  # basic math up unti 8th grade-ish
-
-# 		elif "English" in subject:
-# 			subjects_.append("English")
-
-# 		elif "General Science" in subject:
-# 			subjects_.append("Science")
-
-# 		elif "U.S. History" in subject:
-# 			subjects_.append("History")  # assuming this will cover basic, elementary-school history topics 
-
-# 		else:  #Study/Organizational Skills
-# 			subjects_.append("Study")
-
-# 	if "Math" in tutor.major:
-# 		subjects_.extend(["Geometry","Trigonometry","Pre-Calculus","Calculus"]) # For advanced math subjects (older students)
-
-# 	overlap = 0
-
-# 	for student_subj in student.subjects.split(","):
-# 		for tutor_subj in subjects_:
-# 			if (student_subj == tutor_subj) or (student_subj in tutor.extra_subjects):
-# 				overlap += 1
-
-# 	return overlap 
-
-
-
+# Checks if there is any overlap between student and tutor subjects
 def subject_match(tutor, student):
-        # Assumes dropdown/ checkboxes for subject
-        # TODO : Advanced subjects 
-        # basic subject matching
-        return student.subject in tutor.subjects
+        return len(set(student.subject).intersection(set(tutor.subjects)))
 
 
-''' grade-match : Returns 1 if student grade satisfies tutor's indicated grade range 
-*** We're changing things to work with an easier to maintain google form'''
+''' 
+grade-match : Returns 1 if student grade satisfies tutor's indicated grade range 
+'''
 
 def grade_match(tutor,student):  
         return student.grade in tutor.grades
