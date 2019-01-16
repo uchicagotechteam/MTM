@@ -83,7 +83,8 @@ class Tutor:
         self.email = tutor_dict[tutors_column_names["Email"]]
         
 #         List
-        self.grades = tutor_dict[tutors_column_names["Grades"]].split(',')
+        self.grades = []
+        self.parse_grades()
         self.availability = tutor_dict[tutors_column_names["Availability"]].split(',')
     
 #         Booleans
@@ -98,7 +99,18 @@ class Tutor:
 
         self.work_study = tutor_dict.get(tutors_column_names["Work Study"], False)
         self.onboarded = tutor_dict.get(tutors_column_names["Onboarded"], False)
-        
+
+    def parse_grades(self):
+        grades_responses = tutor_dict[tutors_column_names["Grades"]].split(',')
+        if "Kindergarten - 2nd Grade" in self.grades:
+            self.grades += list(range(0,3))
+        if "3rd - 5th Grade" in self.grades:
+            self.grades += list(range(3,6))
+        if "6th - 8th Grade" in self.grades:
+            self.grades += list(range(6,9))
+        if "High School" in self.grades:
+            self.grades += list(range(9,13))
+    
     def __repr__(self):
         return f'Tutor({self.name})'
 
