@@ -79,8 +79,6 @@ class Tutor:
             if tutor_dict[col_name] != 0:
                 self.subjects.append(tutor_dict[col_name])
 
-        self.subjects = ",".join(self.subjects)
-
         self.major = tutor_dict[tutors_column_names["Major"]]
         self.email = tutor_dict[tutors_column_names["Email"]]
         
@@ -179,7 +177,6 @@ class Student:
         for col_name in students_column_names["Subjects"]:
             if student_dict[col_name] != 0:
                 self.subjects.append(student_dict[col_name])
-        self.subjects = ",".join(self.subjects)
 
         self.frequency = student_dict[students_column_names["Frequency"]] 
         self.availability = []
