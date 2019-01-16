@@ -111,17 +111,6 @@ def time_match(tutor,student):
 def inter_match(tutor,student):
         return (tutor.intl_student and student.scholarship) or not tutor.intl_student
 
-
-# Checks if tutor and student can both either meet in-person or online
-
-def teach_method(tutor,student):
-        if tutor.tutor_method == student.tutor_method:
-                return 2
-        elif (tutor.tutor_method == Tutor_Method.NO_PREFERENCE or
-            student.tutor_method == Tutor_Method.NO_PREFERENCE):
-                return 1
-        return 0
-
 def disability(tutor,student): #Must-have
 	# Student disability status isn't indicated in the data given!!
 	return (student.disabl and tutor.disabl) or not student.disabl
@@ -143,8 +132,7 @@ def get_weight(tutor, student):
         return grade_match(tutor,student) * 10**3 + \
                 subject_match(tutor,student)*10**2 + \
                 time_match(tutor,student) * 10 + \
-                s.scholarship + \
-                teach_method(tutor,student)
+                s.scholarship 
 
 def get_sibling_weight(tutor, siblings):
         if (tutor.max_students < len(siblings)):
