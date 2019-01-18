@@ -7,3 +7,7 @@ parse.py: This file holds the implementation of the Student, Tutor, Student_Mana
 
 algorithm.py : Contains algorithms that sort the data from students/tutors to create potential matches. 
 
+
+## How to Run and Maintanence
+
+Documentation can be found [here](https://docs.google.com/document/d/11hKNLHoVxreF0jYUDrJ0WOA3VbbaXfTyQVy8vfjt4JM/edit)
