@@ -62,9 +62,8 @@ students_column_names = {
     ],
     "Frequency" : "How many times a week would you like to receive tutoring?",
     "Availability" : "When would you be available for tutoring?",
-    "Previous Tutor" : "If you would like to continue to work with a previous tutor, what is their name?If you would like to continue to work with a previous tutor, what is their name (please include first and last, if possible)?"
+    "Previous Tutor" : "If you would like to continue to work with a previous tutor, what is their name (please include first and last, if possible)?"
 }
-
 class Tutor:
 
     def __init__(self, tutor_dict):
@@ -84,8 +83,9 @@ class Tutor:
         
 #         List
         self.grades = []
-        self.parse_grades()
-        self.availability = tutor_dict[tutors_column_names["Availability"]].split(',')
+        self.parse_grades(tutor_dict)
+        self.availability = [
+            i.strip() for i in tutor_dict[tutors_column_names["Availability"]].split(',')]
     
 #         Booleans
         self.intl_student = "yes" in tutor_dict[tutors_column_names["International Student"]].lower()
@@ -100,7 +100,7 @@ class Tutor:
         self.work_study = tutor_dict.get(tutors_column_names["Work Study"], False)
         self.onboarded = tutor_dict.get(tutors_column_names["Onboarded"], False)
 
-    def parse_grades(self):
+    def parse_grades(self, tutor_dict):
         grades_responses = tutor_dict[tutors_column_names["Grades"]].split(',')
         if "Kindergarten - 2nd Grade" in self.grades:
             self.grades += list(range(0,3))
@@ -173,6 +173,7 @@ class Student:
         Guardian: Guardian object associated with student
         all_tutors: Tutor_Manager object with list of all tutors
         '''
+        # print(student_dict)
         self.previous_tutor_match = None
         self.previous_tutor_name = None
         self.guardian = guardian
@@ -193,7 +194,7 @@ class Student:
         self.frequency = student_dict[students_column_names["Frequency"]] 
         self.availability = []
         if student_dict[students_column_names["Availability"]] != 0:
-            self.availability = student_dict[students_column_names["Availability"]].split(',')
+            self.availability = [ i.strip() for i in student_dict[students_column_names["Availability"]].split(',')]
         if self.previous_tutor_name == 0:
             self.previous_tutor_name = None
         else:
@@ -231,9 +232,57 @@ class Student:
             self.previous_tutor_match = find_previous_tutors(all_tutors) #all_tutors is the list of all tutors from Tutor_Manager
 
     def __repr__(self):
-        return f'Student({self.first_name}, {self.last_name})'
+        str1 = "";
+        str1 += " previous_tutor_match " + str(self.previous_tutor_match)
+        str1 += "\n"
+        str1 += " guardian " + str(self.guardian)
+        str1 += "\n"
+        str1 += " disabl " + str(self.disabl)
+        str1 += "\n"
+        str1 += " first_name " + str(self.first_name)
+        str1 += "\n"
+        str1 += " last_name " + str(self.last_name)
+        str1 += "\n"
+        str1 += " grade " + str(self.grade);
+        str1 += "\n"
+        str1 += " school " + str(self.school)
+        str1 += "\n"
+        str1 += " subjects " + str(self.subjects)
+        str1 += "\n"
+        str1 += " frequency " + str(self.frequency)
+        str1 += "\n"
+        str1 += " availability " + str(self.availability)
+        str1 += "\n"
+        str1 += " previous_tutor_name " + str(self.previous_tutor_name)
+        str1 += "\n"
+        return str1;
+        # return f'Student({self.first_name}, {self.last_name})'
 
     def __str__(self):
+        str1 = "";
+        str1 += " previous_tutor_match " + str(self.previous_tutor_match)
+        str1 += "\n"
+        str1 += " guardian " + str(self.guardian)
+        str1 += "\n"
+        str1 += " disabl " + str(self.disabl)
+        str1 += "\n"
+        str1 += " first_name " + str(self.first_name)
+        str1 += "\n"
+        str1 += " last_name " + str(self.last_name)
+        str1 += "\n"
+        str1 += " grade " + str(self.grade);
+        str1 += "\n"
+        str1 += " school " + str(self.school)
+        str1 += "\n"
+        str1 += " subjects " + str(self.subjects)
+        str1 += "\n"
+        str1 += " frequency " + str(self.frequency)
+        str1 += "\n"
+        str1 += " availability " + str(self.availability)
+        str1 += "\n"
+        str1 += " previous_tutor_name " + str(self.previous_tutor_name)
+        str1 += "\n"
+        return str1;
         return f'Student({self.first_name}, {self.last_name})'
 
 def representsInt(s):
@@ -298,8 +347,9 @@ class Student_Manager:
                     self.guardians.append(student_guardian)
                 
                 #start parsing students
-                for i in range(1, 5): #each row has max 4 students
+                for i in range(1, 3): #each row has max 4 students
                     name = f'Student {i} First Name'
+                    # print('here 1')
                     student_i = df.columns.get_loc(name) #index of Student's first name
                     another_student_col = 'Do you have another student applying to MTM?' #column between students
                     
@@ -307,6 +357,7 @@ class Student_Manager:
                         end_student_i = df.columns.get_loc(another_student_col) #Student one ends at first column that asks Do you have another student..?
 
                     elif i==2: #Student two
+                        # print("about to crash\n")
                         if str(row.get(another_student_col)).upper() == 'YES' or row.get(name): #second student exists
                             next_student_col = another_student_col + f'.{i-1}'
                             end_student_i = df.columns.get_loc(next_student_col) #end of Student 2 ends with 'Do you have another student..?.1'
@@ -314,6 +365,8 @@ class Student_Manager:
                             break
                     
                     else: #Student three or four
+                        # print("----------------------------------------")
+                        # print(row.get(another_student_col + f'.{i-2}'))
                         if str(row.get(another_student_col + f'.{i-2}')).upper() == 'YES' or row.get(name):
                             next_student_col = another_student_col + f'.{i-1}'
                             end_student_i = df.columns.get_loc(next_student_col)
@@ -344,6 +397,8 @@ class Student_Manager:
                     student_made = Student(student_dict, student_guardian, all_tutors)
                     #print(student_made)
                     students.append(student_made)
+                    # print(student_made)
+                    # print("made student\n")
 
             return students
 

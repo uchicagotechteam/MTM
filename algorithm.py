@@ -78,6 +78,8 @@ def match_family(tutor, siblings, matched_table, tutors, students):
 def make_table():
     tutor_manager, student_manager = main()
     students = student_manager.students
+#     for student in students:
+#         print(student)
     # sort so that 
     tutor_manager.tutors.sort(
             key = lambda k : k.work_study or k.onboarded)
