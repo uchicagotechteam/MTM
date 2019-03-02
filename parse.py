@@ -9,7 +9,7 @@ tutors_column_names = {
 #    email of the tutor  
     "Email" : "UChicago Email Address",
 #     major of the tutor
-    "Major" : "Intended Major (it's okay if you're Undecided!)",
+    "Major" : "Intended Major (it's okay if you're undecided!)",
 #     the subjects the tutor is comfortable helping with (Comma separated)
     "Subjects" : 
     ["What subjects are you comfortable helping your student with?"],
@@ -20,9 +20,9 @@ tutors_column_names = {
 #     if tutor has a disability
     "Disability" : "Are you comfortable working with students with disabilities including but not limited to autism, ADHD, and dyslexia? (Your honesty with this question helps us ensure that all students get a tutor who can fully address their needs.)",
 #     if the tutor would be willing to do standardized test prep
-    "Test Prep" : "Would you be willing to do standardized test prep for elementary schoolers within the one-on-one tutoring context? (We will provide the foundational resources for you.)",
+    "Test Prep" : "Would you be willing to do standardized test prep for elementary schoolers within the one-on-one tutoring context?",
 #     the max number of students tutor is willing to take
-    "Max Students" : "How many students would you like to take on? (Keep in mind that most families want to meet twice a week for 1-1.5 hours.)",
+    "Max Students" : "How many students would you like to take on in total? (Keep in mind that most families want to meet twice a week for 1-1.5 hours.)",
 #     the availability of the tutor (expecting comma separated list of availability (i.e. Monday Evening, Tuesday Night))
     "Availability" : "What times are you available for tutoring? (check all that apply)",
 #     work study
