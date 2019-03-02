@@ -195,8 +195,8 @@ class Student:
         self.subjects = [];
         for col_name in students_column_names["Subjects"]:
             if student_dict[col_name] != 0:
-                if (';' in student_dict[col_name]) or (',' in student_dict[col_name])
-                    self.subjects += student_dict[colname].replace(';', ',').split(',')
+                if (';' in student_dict[col_name]) or (',' in student_dict[col_name]):
+                    self.subjects += student_dict[col_name].replace(';', ',').split(',')
                 else:
                     self.subjects.append(student_dict[col_name])
 
