@@ -107,7 +107,7 @@ class Tutor:
         self.onboarded = tutor_dict.get(tutors_column_names["Onboarded"], False)
 
     def parse_grades(self, tutor_dict):
-        grades_responses = tutor_dict[tutors_column_names["Grades"]].split(',')
+        grades_responses = tutor_dict[tutors_column_names["Grades"]].replace(';', ',').split(',')
         if "Kindergarten - 2nd Grade" in self.grades:
             self.grades += list(range(0,3))
         if "3rd - 5th Grade" in self.grades:
@@ -195,7 +195,10 @@ class Student:
         self.subjects = [];
         for col_name in students_column_names["Subjects"]:
             if student_dict[col_name] != 0:
-                self.subjects.append(student_dict[col_name])
+                if (';' in student_dict[col_name]) or (',' in student_dict[col_name])
+                    self.subjects += student_dict[colname].replace(';', ',').split(',')
+                else:
+                    self.subjects.append(student_dict[col_name])
 
         self.frequency = student_dict[students_column_names["Frequency"]] 
         self.availability = []
